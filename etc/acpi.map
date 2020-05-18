@@ -1,0 +1,42 @@
+# Part of tiny-radioCD project, originally designed & hand-crafted by macmpi
+# check License at project home https://github.com/macmpi/tiny-radioCD
+
+
+# FORMAT: "<EV_XXX>" <type> "<input.h name>" <keycode> <value> <script under /etc/acpi>
+# hint: "evtest /dev/input/eventX" is very helpful!
+# https://github.com/torvalds/linux/blob/master/include/uapi/linux/input-event-codes.h
+
+
+"EV_SW" 0x05 "SW_LID" 0 1 "button/lid LID 00000080"	# base
+
+"EV_KEY" 0x01 "KEY_KPENTER" 96 1 "NIL"				# remapped FireTV remote (do nothing)
+"EV_KEY" 0x01 "KEY_UP" 103 1 "EJECT"				# remapped FireTV remote
+"EV_KEY" 0x01 "KEY_LEFT" 105 1 "REWIND_TRACK"		# remapped FireTV remote
+"EV_KEY" 0x01 "KEY_RIGHT" 106 1 "SWAP_PLAYLISTS"	# remapped FireTV remote
+"EV_KEY" 0x01 "KEY_DOWN" 108 1 "POWEROFF" 			# remapped FireTV remote
+
+"EV_KEY" 0x01 "KEY_POWER" 116 1 "POWEROFF"			# base unit power button 
+
+"EV_KEY" 0x01 "KEY_MENU" 139 1 "SEQUENCE"			# remapped FireTV remote
+"EV_KEY" 0x01 "KEY_BACK" 158 1 "RANDOM"				# remapped FireTV remote
+
+"EV_KEY" 0x01 "KEY_EJECTCD" 161 1 "EJECT"
+"EV_KEY" 0x01 "KEY_EJECTCLOSECD" 162 1 "EJECT"
+"EV_KEY" 0x01 "KEY_NEXTSONG" 163 1 "NEXT"
+"EV_KEY" 0x01 "KEY_PLAYPAUSE" 164 1 "PLAY_PAUSE"
+"EV_KEY" 0x01 "KEY_PREVIOUSSONG" 165 1 "PREVIOUS"
+
+"EV_KEY" 0x01 "KEY_REWIND" 168 1 "PREVIOUS"			# remapped FireTV remote
+
+"EV_KEY" 0x01 "KEY_HOMEPAGE" 172 1 "TRACK_1"		# remapped FireTV remote
+
+"EV_KEY" 0x01 "KEY_PLAYCD" 200 1 "PLAY_PAUSE"
+"EV_KEY" 0x01 "KEY_PAUSECD" 201 1 "PLAY_PAUSE"
+"EV_KEY" 0x01 "KEY_FASTFORWARD" 208 1 "NEXT"
+
+
+# "EV_KEY" 0x01 "KEY_XXX" XXX 1 "UPDATE"
+# "EV_KEY" 0x01 "KEY_XXX" XXX 1 "EASY_SETUP"
+# "EV_KEY" 0x01 "KEY_XXX" XXX 1 "CONNECT_SPKR"
+# "EV_KEY" 0x01 "KEY_XXX" XXX 1 "SWITCH_SPKR"
+

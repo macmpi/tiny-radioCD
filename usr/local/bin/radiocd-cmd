@@ -1,0 +1,41 @@
+#!/bin/sh -l
+
+# Part of tiny-radioCD project, originally designed & hand-crafted by macmpi
+# check License at project home https://github.com/macmpi/tiny-radioCD
+
+# incrontab provides filename (.mp3) that has been read
+
+case "${1%.*}" in
+  "poweroff")
+  	mpc clear > /dev/null 2>&1
+  	mpc repeat off > /dev/null 2>&1
+  	mpc add .tones/tone-poweroff.mp3 > /dev/null 2>&1
+  	mpc play > /dev/null 2>&1
+  	sleep 3
+  	mpc clear > /dev/null 2>&1
+    poweroff
+    ;;
+  "reboot")
+  	mpc clear > /dev/null 2>&1
+  	mpc repeat off > /dev/null 2>&1
+  	mpc add .tones/tone-reboot.mp3 > /dev/null 2>&1
+  	mpc play > /dev/null 2>&1
+  	sleep 3
+  	mpc clear > /dev/null 2>&1
+    reboot
+    ;;
+  "eject")
+  	grep -q "CD" /tmp/.SOURCE && mpc clear  # stop only if playing CD
+  	rm -f /tmp/CD.m3u     # actual file, preserve original symlink
+    /lib/udev/cdrom_id -e /dev/sr0 > /dev/null 2>&1
+    ;;
+  "switch-spkr")
+    switch-spkr
+    ;;
+  "connect-spkr")
+    connect-spkr
+    ;; 
+  "update")
+    update
+    ;;    
+esac

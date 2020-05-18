@@ -1,0 +1,53 @@
+#!/bin/sh -l
+
+# Part of tiny-radioCD project, originally designed & hand-crafted by macmpi
+# check License at project home https://github.com/macmpi/tiny-radioCD
+
+
+# Generate and load playlist for CD or Radio modes
+# Expects input values in $1
+# $1 empty means player init, we do not know if CD inside
+# $1= nbr of detected audio tracks
+# $1=0 means CD ejected, or CD inserted with no Audio track
+
+. GLOBALS   # needs full path so sh-l in shebang!
+
+mpc clear > /dev/null 2>&1
+rm -f /tmp/CD.m3u     # actual file, preserve original symlink
+
+# No CD drive: load Radios & exit
+[ -e /dev/sr0 ] || \
+{ mpc load Radios > /dev/null 2>&1; mpc random off > /dev/null 2>&1; \
+printf "RADIO" > /tmp/.SOURCE; mpc play > /dev/null 2>&1; exit; }
+
+# Entered with 0 tracks: load Radios & exit
+[ "$1" = "0" ] && \
+{ mpc load Radios > /dev/null 2>&1; mpc random off > /dev/null 2>&1; \
+printf "RADIO" > /tmp/.SOURCE; mpc play > /dev/null 2>&1; exit; }
+
+# Extract Audio CD tracks duration list in seconds
+LIST="$( cdparanoia -sQ -S"$G_CDSPEED" 2>&1 | grep '^\s*[0-9]*\.' | \
+awk '{print $3}' | sed 's/[][]//g' | \
+awk -F: '{ printf "%.0f\n", ($1 * 60) + $2 }' )"
+
+# No audio tracks: load Radios & exit
+[ -z "$LIST" ]  && \
+{ mpc load Radios > /dev/null 2>&1; mpc random off > /dev/null 2>&1; \
+printf "RADIO" > /tmp/.SOURCE; mpc play > /dev/null 2>&1; exit; }
+
+# Generate CD playlist in EXTM3U format (default for MPD)
+printf "#EXTM3U\n\n" > /tmp/CD.m3u
+i=1
+while IFS='' read -r TIME && [ -n "$TIME" ]; do
+   printf "#EXTINF:$TIME,CD - $G_TRACK $i\n" >> /tmp/CD.m3u
+   printf "cdda:///$i\n\n" >> /tmp/CD.m3u
+   i=`expr $i + 1`
+done <<EOF
+$LIST
+EOF
+
+chown mpd:audio /tmp/CD.m3u
+
+mpc load CD > /dev/null 2>&1
+printf "CD" > /tmp/.SOURCE
+mpc play > /dev/null 2>&1

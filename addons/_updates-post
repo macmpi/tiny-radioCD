@@ -1,0 +1,24 @@
+#!/bin/sh
+
+# Part of tiny-radioCD project, originally designed & hand-crafted by macmpi
+# check License at project home https://github.com/macmpi/tiny-radioCD
+
+
+# Note: this file is included so all upper variables work
+# do NOT change directory inside here, or cd "$srcdir" at the end!...
+
+
+# This is intended to cleanup previous versions leftovers AFTER update
+# Typically in this order:
+# 1) restore some settings or files to be restored in _updates-post
+
+
+# Leftovers v x.y:
+
+
+
+
+
+
+
+# Leftovers v z.t:

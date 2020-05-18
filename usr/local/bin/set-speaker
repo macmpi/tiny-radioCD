@@ -1,0 +1,25 @@
+#!/bin/sh
+
+# Part of tiny-radioCD project, originally designed & hand-crafted by macmpi
+# check License at project home https://github.com/macmpi/tiny-radioCD
+
+
+#Expects file containing BT MAC address passed as input
+MAC="$(cat $1 | tr a-z A-Z)"
+
+cat <<EOF > /etc/asound.conf
+pcm.speaker {
+        type plug
+        slave {
+            pcm {
+                type bluealsa
+                device $MAC
+                profile "a2dp"
+            }
+        }
+        hint {
+            show on
+            description "Bluetooth audio speaker"
+        }
+     }
+EOF

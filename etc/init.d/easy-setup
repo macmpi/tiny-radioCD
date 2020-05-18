@@ -1,0 +1,29 @@
+#!/sbin/openrc-run
+
+# Part of tiny-radioCD project, originally designed & hand-crafted by macmpi
+# check License at project home https://github.com/macmpi/tiny-radioCD
+
+
+description="Setup BT and Wifi settings for tiny-radioCD"
+
+depend() {
+    after bluetooth
+    after sshd
+    after dropbear
+    before incrond
+    before acpid
+    before connect-spkr
+}
+
+start()
+{
+	ebegin "Starting tiny-radioCD easy-setup"
+        /usr/local/bin/easy-setup
+	eend $?
+}
+
+stop()
+{
+	ebegin
+	eend $?
+}

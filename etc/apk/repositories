@@ -1,0 +1,10 @@
+# Part of tiny-radioCD project, originally designed & hand-crafted by macmpi
+# check License at project home https://github.com/macmpi/tiny-radioCD
+
+
+http://dl-cdn.alpinelinux.org/alpine/v3.11/main
+http://dl-cdn.alpinelinux.org/alpine/v3.11/community
+
+@emain http://dl-cdn.alpinelinux.org/alpine/edge/main
+@ecomm http://dl-cdn.alpinelinux.org/alpine/edge/community
+@etest http://dl-cdn.alpinelinux.org/alpine/edge/testing

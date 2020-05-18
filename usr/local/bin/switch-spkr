@@ -1,0 +1,41 @@
+#!/bin/sh
+
+# Part of tiny-radioCD project, originally designed & hand-crafted by macmpi
+# check License at project home https://github.com/macmpi/tiny-radioCD
+
+
+# Switch Bluetooth speakers for MPD across all paired speakers
+curr_spkr="$( grep -o "[[:xdigit:]:]\{17\}" /etc/asound.conf 2> /dev/null )" 
+LIST="$( bluetoothctl paired-devices | grep -o "[[:xdigit:]:]\{17\}" )"
+[ -n "$curr_spkr" ] && LIST="$( printf "$LIST" | grep -v "$curr_spkr" )"
+SPKR_LST=""
+while IFS='' read -r ADDR && [ -n "${ADDR}" ]; do
+	# select speaker only
+	bluetoothctl info "$ADDR" | grep -q "UUID: Audio Sink" && SPKR_LST="$SPKR_LST$ADDR "
+done <<EOF
+$LIST
+EOF
+
+SPKR_LST="${SPKR_LST%?}"  # remove last character (trailing space)
+CNCT=false
+
+if [ -n "$SPKR_LST" ]; then
+    for ADDR in $SPKR_LST; do
+        printf "$ADDR" | set-speaker  # for next MPD restart (via udev rule or other)
+        bluetoothctl info "$ADDR" | grep -q "Connected: yes" && { CNCT=true; break; } 
+        bluetoothctl connect "$ADDR" > /dev/null 2>&1 && { CNCT=true; break; }
+    done
+fi
+
+if $CNCT; then
+    service mpd restart > /dev/null 2>&1 # we do NOT count on udev rule to restart MPD
+    bluetoothctl disconnect "$curr_spkr" > /dev/null 2>&1
+else
+    [ -n "$curr_spkr" ] && printf "$curr_spkr" | set-speaker  # all failed, restore original setting
+fi 
+
+
+###############################
+# If not in sys mode, commit /etc/asound.conf changes
+grep -q "root=" /proc/cmdline || \
+{ service incrond stop > /dev/null 2>&1; lbu commit -d; service incrond start > /dev/null 2>&1; } 

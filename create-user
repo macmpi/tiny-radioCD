@@ -1,0 +1,24 @@
+#!/usr/bin/expect -f
+
+# Part of tiny-radioCD project, originally designed & hand-crafted by macmpi
+# check License at project home https://github.com/macmpi/tiny-radioCD
+
+
+# creates a new user with username and pass provided as input
+set username [lindex $argv 0];
+set pass [lindex $argv 1];
+set promp "#"
+
+
+log_user 0;      # suppress all logs to stdout: remove to enable or log_user 1
+
+set timeout 1
+spawn adduser -h /tmp $username
+
+expect "New password:"
+send "$pass\r"
+
+expect "Retype password:"
+send "$pass\r"
+
+expect "changed by root"

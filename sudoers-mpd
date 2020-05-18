@@ -1,0 +1,6 @@
+# Part of tiny-radioCD project, originally designed & hand-crafted by macmpi
+# check License at project home https://github.com/macmpi/tiny-radioCD
+
+
+mpd ALL = (ALL) ALL
+mpd ALL=(root) NOPASSWD: /usr/local/bin/radiocd-cmd

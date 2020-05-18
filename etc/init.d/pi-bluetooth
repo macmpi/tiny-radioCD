@@ -1,0 +1,28 @@
+#!/sbin/openrc-run
+
+# Part of tiny-radioCD project, originally designed & hand-crafted by macmpi
+# check License at project home https://github.com/macmpi/tiny-radioCD
+
+
+description="Pi internal bluetooth interface setup"
+
+depend() {
+	before bluetooth
+	after modules
+	need localmount
+}
+
+start()
+{
+	ebegin "Setting-up Pi bluetooth interface"
+        if [ -s /proc/device-tree/soc/gpio@7e200000/bt_pins/brcm,pins ]; then
+	/usr/local/bin/btuart
+	fi
+	eend $?
+}
+
+stop()
+{
+	ebegin
+	eend $?
+}

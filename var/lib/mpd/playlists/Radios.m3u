@@ -1,0 +1,25 @@
+#EXTM3U
+
+#EXTINF:-1, France-Inter - Direct
+http://direct.franceinter.fr/live/franceinter-midfi.mp3
+
+#EXTINF:-1, France-Info - Direct
+http://direct.franceinfo.fr/live/franceinfo-midfi.mp3
+
+#EXTINF:-1, France-Culture - Direct
+http://direct.franceculture.fr/live/franceculture-midfi.mp3 
+
+#EXTINF:-1, Radio Classique - Direct
+http://radioclassique.ice.infomaniak.ch/radioclassique-high
+
+#EXTINF:-1, RFM - Direct
+https://stream.rfm.fr/rfm-wr14.aac
+
+#EXTINF:-1, RTL2 - Direct
+http://streaming.radio.rtl2.fr/rtl2-1-44-128
+
+#EXTINF:-1, Radio Paradise - Main Mix
+http://stream.radioparadise.com/aac-128
+
+#EXTINF:-1, TSF Jazz - Direct
+http://broadcast.infomaniak.net/tsfjazz-high.mp3

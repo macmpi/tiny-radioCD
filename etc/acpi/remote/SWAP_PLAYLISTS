@@ -1,0 +1,25 @@
+#!/bin/sh -l
+
+# Part of tiny-radioCD project, originally designed & hand-crafted by macmpi
+# check License at project home https://github.com/macmpi/tiny-radioCD
+
+
+SOURCE="$(cat /tmp/.SOURCE)"
+
+case "$SOURCE" in
+  "RADIO")
+    [ -f /var/lib/mpd/playlists/CD.m3u ] || exit #do nothing if no CD
+    mpc clear > /dev/null 2>&1
+    mpc load CD > /dev/null 2>&1
+    printf "CD" > /tmp/.SOURCE
+    ;;
+
+  "CD")
+    mpc clear
+    mpc load Radios > /dev/null 2>&1  # always available
+    mpc random off > /dev/null 2>&1  # useless in Radio mode
+    printf "RADIO" > /tmp/.SOURCE
+    ;;
+esac
+
+mpc play

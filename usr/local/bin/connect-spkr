@@ -1,0 +1,9 @@
+#!/bin/sh
+
+# Part of tiny-radioCD project, originally designed & hand-crafted by macmpi
+# check License at project home https://github.com/macmpi/tiny-radioCD
+
+
+# Tries to connect last used-speakers, if fails try other paired speakers
+bluetoothctl connect "$( grep -o "[[:xdigit:]:]\{17\}" /etc/asound.conf 2> /dev/null )" \
+> /dev/null 2>&1 || switch-spkr

@@ -1,0 +1,49 @@
+#!/bin/sh
+
+# Part of tiny-radioCD project, originally designed & hand-crafted by macmpi
+# check License at project home https://github.com/macmpi/tiny-radioCD
+
+
+mpc clear > /dev/null 2>&1 # avoid multiple launches if launched via mpc on short playlist & repeat)
+
+# Download, extract and execute updates
+# To be able to update this very file, actual execution can not be launched
+# from this file. So we need to transplant execution elsewhere
+
+# we construct relocated update script
+echo "#!/bin/sh" > /tmp/.reloc-update
+# we keep this script from next banner to execute beyond that point
+sed -n -e '/^#* We start from here !! #*/,$p' /usr/local/bin/update >> /tmp/.reloc-update
+
+chmod 500 /tmp/.reloc-update
+
+# Now we will continue from another location... see you soon !!
+exec /tmp/.reloc-update >/dev/null 2>&1 # exec ensures we keep same PID and won't return, bye
+
+# now we are gone in hyperspace !!!
+
+
+###################### We start from here !! ###########################
+
+url="https://github.com/macmpi/tiny-radioCD/archive/master.zip"
+[ -f /tmp/dev ] && url="https://github.com/macmpi/tiny-radioCD/archive/dev.zip"
+
+cd /tmp
+
+wget -O tiny-radioCD.zip "$url" > /tmp/update.log 2>&1 || \
+{ echo "Update download failed, exiting!" > /tmp/update.log; exit; }
+
+mpc clear > /dev/null 2>&1
+mpc repeat off > /dev/null 2>&1
+mpc add .tones/tone-update.mp3 > /dev/null 2>&1
+mpc play > /dev/null 2>&1
+sleep 3
+mpc clear > /dev/null 2>&1
+
+unzip -oq tiny-radioCD.zip > /tmp/update.log 2>&1
+cd tiny-radioCD
+chmod +x setup-tiny-radioCD
+./setup-tiny-radioCD > /tmp/update.log 2>&1
+
+radiocd-cmd reboot
+

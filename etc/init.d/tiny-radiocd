@@ -1,0 +1,24 @@
+#!/sbin/openrc-run
+
+# Part of tiny-radioCD project, originally designed & hand-crafted by macmpi
+# check License at project home https://github.com/macmpi/tiny-radioCD
+
+
+description="tiny-radioCD init"
+
+depend() {
+	after mpd
+}
+
+start()
+{
+	ebegin "Starting tiny-radioCD"
+		/usr/local/bin/radiocd-init
+	eend $?
+}
+
+stop()
+{
+	ebegin
+	eend $?
+}

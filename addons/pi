@@ -1,0 +1,100 @@
+#!/bin/sh
+
+# Part of tiny-radioCD project, originally designed & hand-crafted by macmpi
+# check License at project home https://github.com/macmpi/tiny-radioCD
+
+
+# Note: this file is included so all upper variables work
+# do NOT change directory inside here, or cd "$srcdir" at the end!...
+
+
+# Limited Pi-specific customizations regarding rng-tools, pi-bluetooth initd service,
+# swclock & easy-setup
+
+echo "Installing Pi specific tweaks"
+
+apk -u add rng-tools bluez-deprecated@emain --update-cache \
+|| { echo >&2 "Install failed, exiting! (for clues: apk -s fix)"; exit 1; }
+
+rc-update add rngd boot 2>&1 # same as wpa_supplicant for providing entropy
+
+
+# on Pi no hardware clock
+service hwclock stop 2>&1
+rc-update del hwclock boot 2>&1
+service swclock start 2>&1
+rc-update add swclock boot 2>&1
+
+#  Pi Specific service to load bluetooth firmware until done via device-tree
+install -m755 "$srcdir"/usr/local/bin/btuart /usr/local/bin/btuart
+install -m755 "$srcdir"/etc/init.d/pi-bluetooth /etc/init.d/pi-bluetooth
+rc-update add pi-bluetooth sysinit 2>&1
+
+# Fix eventually missing brcm NVRAM firmware file for PiZeroW
+# will only work on sys mode (other modes /lib/firmware is not writeable initramfs)
+grep -q "Raspberry Pi" /proc/cpuinfo && \
+! [ -f /lib/firmware/brcm/brcmfmac43430-sdio.raspberrypi,model-zero-w.txt ] && \
+ln -sfn brcmfmac43430-sdio.raspberrypi,3-model-b.txt \
+/lib/firmware/brcm/brcmfmac43430-sdio.raspberrypi,model-zero-w.txt
+
+
+
+#################################
+# Modify SD content: easy-setup and boot options
+mount -o remount,rw /dev/mmcblk0p1 /media/mmcblk0p1
+
+# Enable easy-setup on SD and add default config file sample 
+mkdir -p /media/mmcblk0p1/_tiny-radioCD
+install "$srcdir"/tiny-radioCD.conf /media/mmcblk0p1/_tiny-radioCD/tiny-radioCD.conf
+ln -sfn /media/mmcblk0p1/_tiny-radioCD /etc/tiny-radioCD
+
+
+# Pi eventual supplements for config.txt or usrcfg.txt
+
+# Disable the rainbow splash screen (will not add if there and commented)
+grep -q "disable_splash=1" /media/mmcblk0p1/usercfg.txt || \
+echo "disable_splash=1" >> /media/mmcblk0p1/usercfg.txt
+
+# Set the bootloader delay to 0 seconds. Default is 1s if not specified.
+# (will not add if there and commented)
+grep -q "boot_delay=0" /media/mmcblk0p1/usercfg.txt || \
+echo "boot_delay=0" >> /media/mmcblk0p1/usercfg.txt
+
+# built-in audio, and HDMI audio (will not add if there and commented)
+grep -q "dtparam=audio=on" /media/mmcblk0p1/usercfg.txt || \
+echo "dtparam=audio=on" >> /media/mmcblk0p1/usercfg.txt
+
+grep -q "force_hdmi_open=1" /media/mmcblk0p1/usercfg.txt || \
+echo "force_hdmi_open=1" >> /media/mmcblk0p1/usercfg.txt
+
+
+# ON/OFF button on GPIO3
+#dtoverlay=gpio-shutdown
+
+# External activity LED on GPIO 21
+#dtparam=act_led_gpio=21
+
+# gpu_mem MUST be set in original config.txt, not in include
+# https://github.com/raspberrypi/firmware/issues/1332#issuecomment-584166999
+# gpu_mem=16 (requires _cd files to be installed)
+
+mount -o remount,ro /dev/mmcblk0p1 /media/mmcblk0p1
+
+
+
+
+#################################
+# Preserve local specific stuff according to install modes
+
+if !(grep -q "root=" /proc/cmdline); then  #we are not in sys mode (so data or diskless)
+	# stuff of matter for diskless or data mode
+	lbu include /etc/init.d/pi-bluetooth
+	
+	if !(grep -q "/var" /etc/fstab); then #we are not in data mode: hence diskless only
+	    # stuff from /var for diskless mode
+	    :
+	fi
+fi
+
+
+echo "Done with Pi specific tweaks"

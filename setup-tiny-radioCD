@@ -1,0 +1,211 @@
+#!/bin/sh
+
+# Part of tiny-radioCD project, originally designed & hand-crafted by macmpi
+# check License at project home https://github.com/macmpi/tiny-radioCD
+
+
+# tiny-radioCD generic install script
+# Assumes baseline AlpineLinux setup already done in sys mode and internet access
+# Additional specific install scripts can be included in addons-section below
+
+version="0.5"
+
+
+
+! [ $(id -u) -eq 0 ] && { echo >&2 "Please run as root (i.e. with sudo)"; exit 1; }
+
+srcdir="$(pwd)"  # requires absolute paths for repofiles
+
+
+###############################
+# Updates clean-up pre
+
+. "$srcdir"/addons/_updates-pre
+
+
+###############################
+# Install minimum required packages
+
+# Test internet availability
+wget -q --timeout=20 --spider https://is.gd/t_rCD > /dev/null 2>&1 \
+|| { echo >&2 "Please check your internet connection !! Exiting now..."; exit 1; }
+
+echo "Downloading & installing minimum required packages: it may take some time..."
+echo ""
+
+install -m644 "$srcdir"/etc/apk/repositories /etc/apk/repositories
+
+apk -u add sudo wpa_supplicant udev cdparanoia mpc avahi incron expect \
+mpd@ecomm bluez@emain bluez-alsa@etest \
+icu-libs@emain fdk-aac@ecomm --update-cache 2>&1 \
+|| { echo >&2 "Base packages install failed, exiting! (for clues: apk -s fix)"; exit 1; }
+
+
+###############################
+# Baseline system setup
+echo "Finalizing setup..."
+echo ""
+
+# Enable Wifi
+rc-update add wpa_supplicant boot 2>&1
+
+install -m644 "$srcdir"/etc/motd /etc/motd
+sed -i '$ s/.$/v'"$version"' by macmpi\n\n/' /etc/motd
+
+/sbin/setup-udev -n   # do not start service right now
+
+
+###############################
+# tiny-radioCD application setup
+
+# GLOBALS
+install -m644 "$srcdir"/usr/local/bin/GLOBALS /usr/local/bin/GLOBALS
+
+# udev rules
+install -m644 "$srcdir"/etc/udev/rules.d/99-srX_change.rules /etc/udev/rules.d/99-srX_change.rules
+install -m644 "$srcdir"/etc/udev/rules.d/99-input.rules /etc/udev/rules.d/99-input.rules
+
+# Services
+install -m755 "$srcdir"/etc/init.d/easy-setup  /etc/init.d/easy-setup
+install -m755 "$srcdir"/usr/local/bin/easy-setup /usr/local/bin/easy-setup
+rc-update add easy-setup default 2>&1
+
+install -m755 "$srcdir"/etc/init.d/tiny-radiocd /etc/init.d/tiny-radiocd
+install -m755 "$srcdir"/usr/local/bin/radiocd-init /usr/local/bin/radiocd-init
+rc-update add tiny-radiocd default 2>&1
+
+install -m755 "$srcdir"/etc/init.d/connect-spkr  /etc/init.d/connect-spkr
+install -m755 "$srcdir"/usr/local/bin/connect-spkr /usr/local/bin/connect-spkr
+rc-update add connect-spkr default 2>&1
+
+# Utilities
+install -m755 "$srcdir"/usr/local/bin/init-playqueue /usr/local/bin/init-playqueue
+install -m755 "$srcdir"/usr/local/bin/btdevmngr /usr/local/bin/btdevmngr
+install -m755 "$srcdir"/usr/local/bin/radiocd-cmd /usr/local/bin/radiocd-cmd
+install -m755 "$srcdir"/usr/local/bin/set-speaker /usr/local/bin/set-speaker
+install -m755 "$srcdir"/usr/local/bin/update /usr/local/bin/update
+install -m755 "$srcdir"/usr/local/bin/pair-device /usr/local/bin/pair-device
+install -m755 "$srcdir"/usr/local/bin/switch-spkr /usr/local/bin/switch-spkr
+
+
+# Custom MPD content: playlists & tracks   mpd:audio
+install -m644 -o mpd -g audio "$srcdir"/var/lib/mpd/playlists/* /var/lib/mpd/playlists/
+ln -sfn /tmp/CD.m3u /var/lib/mpd/playlists/CD.m3u
+chown -h mpd:audio /var/lib/mpd/playlists/CD.m3u
+
+install -dm755 -o mpd -g audio /var/lib/mpd/music/--Menu--
+install -m644 -o mpd -g audio "$srcdir"/var/lib/mpd/music/--Menu--/* /var/lib/mpd/music/--Menu--/
+
+install -dm755 -o mpd -g audio /var/lib/mpd/music/.tones
+install -m644 -o mpd -g audio "$srcdir"/var/lib/mpd/music/.tones/* /var/lib/mpd/music/.tones/
+
+
+###############################
+# Bluetooth setup
+
+# enable bluetooth at startup
+sed -i 's/^#AutoEnable=false/AutoEnable=true/' /etc/bluetooth/main.conf
+
+# name Bluetooth iface
+sed -i 's/^#Name =.*/Name = tiny radioCD/' /etc/bluetooth/main.conf
+grep -q "PRETTY_HOSTNAME=" /etc/machine-info || \
+echo "PRETTY_HOSTNAME=tiny radioCD" >> /etc/machine-info
+
+# avoids xbuffer underrun when bluetooth forces some reconnections
+sed -i 's/^#ReconnectAttempts=.*/ReconnectAttempts=0/' /etc/bluetooth/main.conf
+# why not...
+sed -i 's/^#FastConnectable =.*/FastConnectable = true/' /etc/bluetooth/main.conf
+
+
+rc-update add bluetooth default 2>&1
+rc-update add bluealsa default 2>&1
+service bluealsa start 2>&1   # just for use to eventually pair after install
+
+
+###############################
+# MPD setup
+
+# mpd install package creates mpd user and directories, mpd already audio member
+adduser mpd cdrom
+
+install -m644 "$srcdir"/etc/mpd.conf /etc/mpd.conf
+rc-update add mpd default 2>&1
+
+service incrond stop 2>&1 # just in case running the script runs to update an existing install
+service mpd start 2>&1
+while ! ( mpc > /dev/null 2>&1 ); do sleep 0.5 ; done  # let MPD settle
+mpc rescan 2>&1  # update mpd database: safe for --Menu-- as incrond is not running
+mpc update 2>&1
+
+
+###############################
+# Remote AVRCP control
+
+grep -q "uinput" /etc/modules || echo "uinput" >> /etc/modules
+
+install -m644 "$srcdir"/etc/acpi.map /etc/acpi.map
+install -m644 "$srcdir"/etc/acpid.conf /etc/acpid.conf
+
+install -dm755 /etc/acpi/remote/
+install -m755 "$srcdir"/etc/acpi/remote/* /etc/acpi/remote/
+
+
+###############################
+# Remote mpc control over network
+
+# incrontab and visudo require mpd user & target files exist!
+grep -q "mpd" /etc/incron.allow || echo "mpd" >> /etc/incron.allow
+incrontab -u mpd "$srcdir"/incron-mpd 2>&1
+cat "$srcdir"/sudoers-mpd | (EDITOR="tee" visudo -f /etc/sudoers.d/010_mpd-nopasswd) 2>&1
+
+rc-update add incrond default 2>&1
+rc-update add avahi-daemon default 2>&1
+
+
+###############################
+# Updates clean-up post
+
+. "$srcdir"/addons/_updates-post
+
+
+###############################
+# addons-section: trigger here any specific install script to be included
+grep -q "Raspberry Pi" /proc/cpuinfo && . "$srcdir"/addons/pi
+
+
+###############################
+# Preserve local specific stuff according to install modes
+
+if !(grep -q "root=" /proc/cmdline); then  #we are not in sys mode (so data or diskless)
+	# stuff of matter for diskless or data mode
+	lbu include /usr/local/bin
+	lbu include /etc/init.d/connect-spkr
+	lbu include /etc/init.d/easy-setup
+	lbu include /etc/init.d/tiny-radiocd
+	
+	if !(grep -q "/var" /etc/fstab); then #we are not in data mode: hence diskless only
+	    # stuff from /var for diskless mode
+    	lbu include /var/lib/mpd/tag_cache
+    	lbu include /var/lib/mpd/music
+    	lbu include /var/lib/mpd/playlists
+    	lbu include /var/lib/bluetooth
+    	lbu include /var/spool/incron/mpd
+	fi
+	lbu commit -d
+fi
+
+###############################
+
+echo ""
+echo "     tiny-radioCD install is now complete !!
+
+For Bluetooth speaker association (and eventual remote command pairing), do:
+sudo bluetoothctl  (scan and then pair, connect, trust any wanted device)
+Take note of your speaker MAC Address XX:XX:XX:XX:XX:XX in your home directory:
+printf "XX:XX:XX:XX:XX:XX" > myspeaker
+Then finish speaker setup with the below command:
+sudo set-speaker myspeaker
+
+     Restart to enjoy your new tiny-radioCD !...
+"
+

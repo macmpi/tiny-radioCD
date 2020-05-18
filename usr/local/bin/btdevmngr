@@ -1,0 +1,75 @@
+#!/bin/sh
+
+# Part of tiny-radioCD project, originally designed & hand-crafted by macmpi
+# check License at project home https://github.com/macmpi/tiny-radioCD
+
+
+# Bluetooth devices mays connect/disconnect frequently
+# Some devices like remotes issue multiples /dev/input
+# lets filter those events before relaunching acpid and resetting speaker
+
+# $1 contains input/eventX
+
+# use a mutex as there may be concurrent processes from udev rule
+exec 4<> /tmp/.NEW    # Processes semaphore with found MAC Address
+flock -x 4
+
+NEW=""
+if ! [ -s /tmp/.NEW ]; then   # we are first
+
+	# Search and grab any reference to a MAC address in udev info
+	LIST="$( udevadm info -q all --attribute-walk /dev/"$1" \
+| grep -o "[[:xdigit:]:]\{17\}" )"
+
+	while IFS='' read -r ADDR && [ -n "$ADDR" ]; do
+		bluetoothctl info "$ADDR" | grep -q "Connected: yes" || continue  #is not avail
+		NEW="$(printf "$ADDR" | tr a-z A-Z)"  #normalise into uppercase
+		break                    # we found it first! 
+	done <<EOF
+$LIST
+EOF
+
+	# Fail-safe in case no reliable MAC is found
+	# will be OK to enable input, but will not reopen bluetooth alsa output for MPD
+	[ -z "$NEW" ] && NEW="fail-safe"
+	
+	printf "$NEW" > /tmp/.NEW
+fi
+
+flock -u 4
+exec 4<&-
+
+# Mutex filters-out devices opening multiple inputs: we just keep first
+[ -z "$NEW" ] && exit
+
+# typically 2nd to last from same device arrives 100ms later
+# we will wait 200ms to have a unique reference event to deal with
+# and let related inputs settle before we relaunch aspid
+sleep 0.2
+rm /tmp/.NEW 	# we are done with filtering & internal $NEW variable set
+
+
+# restart acpid to manage new input device
+# restart each time new input comes-up (but not during boot)
+[ -f /var/run/acpid.pid ] && /sbin/service acpid restart
+
+# busybox bug: acpid may be crashed at boot if no input dev (hence no pid file) 
+service acpid status 2>&1 | grep -q crashed && /sbin/service acpid restart
+
+
+# /etc/asound.conf referenced speaker may spontaneously
+# connect after startup (or reconnect after failure)
+# MPD needs then to be restarted to re-open the ALSA sound channel properly
+
+# bail-off if current device is not a speakers/headset
+bluetoothctl info "$NEW" | grep -q "UUID: Audio Sink" || exit
+
+# bail-off if this detected audio device is not selected in /etc/asound.conf
+# (audio device switch has to be initiated by user or speaker unavailability at boot)
+grep -q "$NEW" /etc/asound.conf > /dev/null 2>&1 || exit
+
+# Now, this Audio device needs to be reconnected to MPD
+# We will then restart MPD
+# mpd state is in /tmp/.mpd-state and will be restored
+service mpd restart > /dev/null 2>&1
+

@@ -1,0 +1,66 @@
+#!/bin/sh
+
+# Part of tiny-radioCD project, originally designed & hand-crafted by macmpi
+# check License at project home https://github.com/macmpi/tiny-radioCD
+
+
+# Makes an image & remove sshd; optionally locks-out root
+
+! [ $(id -u) -eq 0 ] && { echo >&2 "Please run as root (i.e. with sudo)"; exit 1; }
+
+
+########## Install tiny-radioCD
+cd /tmp/tiny-radioCD
+
+chmod +x setup-tiny-radioCD
+./setup-tiny-radioCD
+
+
+########## do some clean-up
+/sbin/setup-hostname tiny-radiocd
+
+rm -f /etc/wpa_supplicant/wpa_supplicant.conf
+rm -rf /var/lib/bluetooth/*
+
+rc-update del sshd default
+apk del openssh
+
+rc-update del dropbear default
+apk del dropbear
+
+# clear ssh keys on image: will be recreated on first sshd start
+rm -f /etc/ssh/ssh_host_*
+rm -f /etc/dropbear/dropbear_*_host_key
+
+
+########## Manage accounts: root & eventual admin
+# Optionally lock-out root and no admin if non-empty parameter
+if [ -z "$1" ]; then
+
+    # admin user and tiny-radioCD pass, allows sudo, can log via ssh
+    chmod +x create-user
+    ./create-user admin tiny-radioCD   # homedir /tmp	
+    echo "admin ALL = (ALL) ALL" | (EDITOR="tee" visudo -f /etc/sudoers.d/010_admin)
+
+    # enable dropbear ssh
+    apk -u add dropbear
+    rc-update add dropbear default
+    
+    passwd -d root  # expiring it would require shadow package
+
+else
+
+    mv /etc/securetty /etc/securetty.orig
+    touch /etc/securetty
+    chmod 600 /etc/securetty
+
+    sed -i '/:0:0:/s_/bin/ash_/sbin/nologin_' /etc/passwd
+
+    passwd -l root
+
+fi
+
+
+grep -q "root=" /proc/cmdline || \
+{ touch /etc/tiny-radiocd_ssh_nokeys; lbu commit -d; }
+

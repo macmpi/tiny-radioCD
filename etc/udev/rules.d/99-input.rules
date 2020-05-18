@@ -1,0 +1,8 @@
+# Part of tiny-radioCD project, originally designed & hand-crafted by macmpi
+# check License at project home https://github.com/macmpi/tiny-radioCD
+
+
+# manage Bluetooth devices that can come & go
+ACTION=="add", SUBSYSTEM=="input", ENV{ID_BUS}=="bluetooth", \
+ENV{DEVNAME}=="/dev/input/event[0-9]|[1-9][0-9]", \
+RUN+="/usr/local/bin/btdevmngr $name"
