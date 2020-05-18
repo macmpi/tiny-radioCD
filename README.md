@@ -47,7 +47,7 @@ With network availability, any ***mpc client application*** can easily connect t
 
 ## Install procedure:
 
-If you don't use ready-made images, just do the following on your [AlpineLinux device](https://wiki.alpinelinux.org/wiki/Installation) with internet access:
+If you don't use [ready-made images](https://github.com/macmpi/tiny-radioCD/wiki/Pre-built-images), just do the following on your [AlpineLinux device](https://wiki.alpinelinux.org/wiki/Installation) with internet access:
 ```
 cd /tmp
 wget -O tiny-radioCD.zip https://github.com/macmpi/tiny-radioCD/archive/master.zip
