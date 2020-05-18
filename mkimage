@@ -10,8 +10,6 @@
 
 
 ########## Install tiny-radioCD
-cd /tmp/tiny-radioCD
-
 chmod +x setup-tiny-radioCD
 ./setup-tiny-radioCD
 
