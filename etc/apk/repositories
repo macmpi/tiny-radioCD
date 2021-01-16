@@ -2,9 +2,9 @@
 # check License at project home https://github.com/macmpi/tiny-radioCD
 
 
-http://dl-cdn.alpinelinux.org/alpine/v3.11/main
-http://dl-cdn.alpinelinux.org/alpine/v3.11/community
+http://dl-cdn.alpinelinux.org/alpine/v3.13/main
+http://dl-cdn.alpinelinux.org/alpine/v3.13/community
 
-@emain http://dl-cdn.alpinelinux.org/alpine/edge/main
-@ecomm http://dl-cdn.alpinelinux.org/alpine/edge/community
-@etest http://dl-cdn.alpinelinux.org/alpine/edge/testing
+#http://dl-cdn.alpinelinux.org/alpine/edge/main
+#http://dl-cdn.alpinelinux.org/alpine/edge/community
+#http://dl-cdn.alpinelinux.org/alpine/edge/testing
