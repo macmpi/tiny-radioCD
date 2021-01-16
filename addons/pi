@@ -13,7 +13,7 @@
 
 echo "Installing Pi specific tweaks"
 
-apk -u add rng-tools bluez-deprecated@emain --update-cache \
+apk -u add rng-tools bluez-deprecated --update-cache \
 || { echo >&2 "Install failed, exiting! (for clues: apk -s fix)"; exit 1; }
 
 rc-update add rngd boot 2>&1 # same as wpa_supplicant for providing entropy
