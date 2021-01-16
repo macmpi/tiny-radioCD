@@ -8,7 +8,7 @@
 # Assumes baseline AlpineLinux setup already done in sys mode and internet access
 # Additional specific install scripts can be included in addons-section below
 
-version="0.5"
+version="0.6"
 
 
 
@@ -36,8 +36,7 @@ echo ""
 install -m644 "$srcdir"/etc/apk/repositories /etc/apk/repositories
 
 apk -u add sudo wpa_supplicant udev cdparanoia mpc avahi incron expect \
-mpd@ecomm bluez@emain bluez-alsa@etest \
-icu-libs@emain fdk-aac@ecomm --update-cache 2>&1 \
+mpd bluez-alsa --update-cache 2>&1 \
 || { echo >&2 "Base packages install failed, exiting! (for clues: apk -s fix)"; exit 1; }
 
 
