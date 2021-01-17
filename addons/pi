@@ -13,7 +13,7 @@
 
 echo "Installing Pi specific tweaks"
 
-apk -u add rng-tools bluez-deprecated --update-cache \
+apk -u add rng-tools --update-cache \
 || { echo >&2 "Install failed, exiting! (for clues: apk -s fix)"; exit 1; }
 
 rc-update add rngd boot 2>&1 # same as wpa_supplicant for providing entropy
@@ -24,11 +24,6 @@ service hwclock stop 2>&1
 rc-update del hwclock boot 2>&1
 service swclock start 2>&1
 rc-update add swclock boot 2>&1
-
-#  Pi Specific service to load bluetooth firmware until done via device-tree
-install -m755 "$srcdir"/usr/local/bin/btuart /usr/local/bin/btuart
-install -m755 "$srcdir"/etc/init.d/pi-bluetooth /etc/init.d/pi-bluetooth
-rc-update add pi-bluetooth sysinit 2>&1
 
 # Fix eventually missing brcm NVRAM firmware file for PiZeroW
 # will only work on sys mode (other modes /lib/firmware is not writeable initramfs)
@@ -51,6 +46,10 @@ ln -sfn /media/mmcblk0p1/_tiny-radioCD /etc/tiny-radioCD
 
 # Pi eventual supplements for config.txt or usrcfg.txt
 
+# eventual gpu_mem MUST be set in original config.txt, not in include
+# https://github.com/raspberrypi/firmware/issues/1332#issuecomment-584166999
+# gpu_mem=16 to reduce memory footprint (requires _cd files to be installed)
+
 # Disable the rainbow splash screen (will not add if there and commented)
 grep -q "disable_splash=1" /media/mmcblk0p1/usercfg.txt || \
 echo "disable_splash=1" >> /media/mmcblk0p1/usercfg.txt
@@ -60,10 +59,18 @@ echo "disable_splash=1" >> /media/mmcblk0p1/usercfg.txt
 grep -q "boot_delay=0" /media/mmcblk0p1/usercfg.txt || \
 echo "boot_delay=0" >> /media/mmcblk0p1/usercfg.txt
 
+# enable Bluetooth via overlays (post kernel 5.4.50)
+# (will not add if there and commented)
+grep -q "dtparam=krnbt=on" /media/mmcblk0p1/usercfg.txt || \
+echo "dtparam=krnbt=on" >> /media/mmcblk0p1/usercfg.txt
+# due to missing HW flowcontrol on Pi3b rev1.2 boards
+# one may want to limit baudrate with dtparam=krnbt_baudrate=<rate here>
+
 # built-in audio, and HDMI audio (will not add if there and commented)
 grep -q "dtparam=audio=on" /media/mmcblk0p1/usercfg.txt || \
 echo "dtparam=audio=on" >> /media/mmcblk0p1/usercfg.txt
 
+# force HDMI open (will not add if there and commented)
 grep -q "force_hdmi_open=1" /media/mmcblk0p1/usercfg.txt || \
 echo "force_hdmi_open=1" >> /media/mmcblk0p1/usercfg.txt
 
@@ -74,9 +81,6 @@ echo "force_hdmi_open=1" >> /media/mmcblk0p1/usercfg.txt
 # External activity LED on GPIO 21
 #dtparam=act_led_gpio=21
 
-# gpu_mem MUST be set in original config.txt, not in include
-# https://github.com/raspberrypi/firmware/issues/1332#issuecomment-584166999
-# gpu_mem=16 (requires _cd files to be installed)
 
 mount -o remount,ro /dev/mmcblk0p1 /media/mmcblk0p1
 
