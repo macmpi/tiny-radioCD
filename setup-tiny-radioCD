@@ -184,11 +184,11 @@ if !(grep -q "root=" /proc/cmdline); then  #we are not in sys mode (so data or d
 	
 	if !(grep -q "/var" /etc/fstab); then #we are not in data mode: hence diskless only
 	    # stuff from /var for diskless mode
-    	lbu include /var/lib/mpd/tag_cache
-    	lbu include /var/lib/mpd/music
-    	lbu include /var/lib/mpd/playlists
-    	lbu include /var/lib/bluetooth
-    	lbu include /var/spool/incron/mpd
+    	    lbu include /var/lib/mpd/tag_cache
+    	    lbu include /var/lib/mpd/music
+    	    lbu include /var/lib/mpd/playlists
+    	    lbu include /var/lib/bluetooth
+    	    lbu include /var/spool/incron/mpd
 	fi
 	lbu commit -d
 fi
