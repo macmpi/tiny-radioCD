@@ -88,15 +88,18 @@ install -m755 "$srcdir"/usr/local/bin/switch-spkr /usr/local/bin/switch-spkr
 
 
 # Custom MPD content: playlists & tracks   mpd:audio
+chown mpd:audio /var/lib/mpd/playlists
+chown mpd:audio /var/lib/mpd/music
+
 install -m644 -o mpd -g audio "$srcdir"/var/lib/mpd/playlists/* /var/lib/mpd/playlists/
 ln -sfn /tmp/CD.m3u /var/lib/mpd/playlists/CD.m3u
 chown -h mpd:audio /var/lib/mpd/playlists/CD.m3u
 
-install -dm755 -o mpd -g audio /var/lib/mpd/music/--Menu--
-install -m644 -o mpd -g audio "$srcdir"/var/lib/mpd/music/--Menu--/* /var/lib/mpd/music/--Menu--/
+install -dm755 /var/lib/mpd/music/--Menu--
+install -m644 "$srcdir"/var/lib/mpd/music/--Menu--/* /var/lib/mpd/music/--Menu--/
 
-install -dm755 -o mpd -g audio /var/lib/mpd/music/.tones
-install -m644 -o mpd -g audio "$srcdir"/var/lib/mpd/music/.tones/* /var/lib/mpd/music/.tones/
+install -dm755 /var/lib/mpd/music/.tones
+install -m644 "$srcdir"/var/lib/mpd/music/.tones/* /var/lib/mpd/music/.tones/
 
 
 ###############################
