@@ -117,6 +117,8 @@ echo "PRETTY_HOSTNAME=tiny radioCD" >> /etc/machine-info
 sed -i 's/^#ReconnectAttempts=.*/ReconnectAttempts=0/' /etc/bluetooth/main.conf
 # why not...
 sed -i 's/^#FastConnectable =.*/FastConnectable = true/' /etc/bluetooth/main.conf
+# bluez-5.56 AVRCP compatibility    https://github.com/bluez/bluez/issues/85
+sed -i 's/^#JustWorksRepairing =.*/JustWorksRepairing = always/' /etc/bluetooth/main.conf
 
 
 rc-update add bluetooth default 2>&1
