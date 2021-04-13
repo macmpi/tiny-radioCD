@@ -45,6 +45,14 @@ mpd bluez-alsa --update-cache 2>&1 \
 echo "Finalizing setup..."
 echo ""
 
+# set hostname
+grep -q "localhost" /etc/hostname && \
+echo "tiny-radiocd" > /etc/hostname && \
+hostname -F /etc/hostname
+
+grep -q "PRETTY_HOSTNAME=" /etc/machine-info || \
+echo "PRETTY_HOSTNAME=tiny radioCD" >> /etc/machine-info
+
 # Enable Wifi
 rc-update add wpa_supplicant boot 2>&1
 
@@ -110,8 +118,6 @@ sed -i 's/^#AutoEnable=false/AutoEnable=true/' /etc/bluetooth/main.conf
 
 # name Bluetooth iface
 sed -i 's/^#Name =.*/Name = tiny radioCD/' /etc/bluetooth/main.conf
-grep -q "PRETTY_HOSTNAME=" /etc/machine-info || \
-echo "PRETTY_HOSTNAME=tiny radioCD" >> /etc/machine-info
 
 # avoids xbuffer underrun when bluetooth forces some reconnections
 sed -i 's/^#ReconnectAttempts=.*/ReconnectAttempts=0/' /etc/bluetooth/main.conf
