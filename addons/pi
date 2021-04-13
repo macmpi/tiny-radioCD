@@ -70,9 +70,9 @@ echo "dtparam=krnbt=on" >> /media/mmcblk0p1/usercfg.txt
 grep -q "dtparam=audio=on" /media/mmcblk0p1/usercfg.txt || \
 echo "dtparam=audio=on" >> /media/mmcblk0p1/usercfg.txt
 
-# force HDMI open (will not add if there and commented)
-grep -q "force_hdmi_open=1" /media/mmcblk0p1/usercfg.txt || \
-echo "force_hdmi_open=1" >> /media/mmcblk0p1/usercfg.txt
+# set HDMI safe (will not add if there and commented)
+grep -q "hdmi_safe=1" /media/mmcblk0p1/usercfg.txt || \
+echo "hdmi_safe=1" >> /media/mmcblk0p1/usercfg.txt
 
 
 # ON/OFF button on GPIO3
