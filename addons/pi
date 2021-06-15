@@ -8,8 +8,7 @@
 # do NOT change directory inside here, or cd "$srcdir" at the end!...
 
 
-# Limited Pi-specific customizations regarding rng-tools, pi-bluetooth initd service,
-# swclock & easy-setup
+# Limited Pi-specific customizations regarding rng-tools, swclock & easy-setup
 
 echo "Installing Pi specific tweaks"
 
@@ -92,8 +91,7 @@ mount -o remount,ro /dev/mmcblk0p1 /media/mmcblk0p1
 
 if !(grep -q "root=" /proc/cmdline); then  #we are not in sys mode (so data or diskless)
 	# stuff of matter for diskless or data mode
-	lbu include /etc/init.d/pi-bluetooth
-	
+		
 	if !(grep -q "/var" /etc/fstab); then #we are not in data mode: hence diskless only
 	    # stuff from /var for diskless mode
 	    :
