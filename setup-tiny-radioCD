@@ -127,7 +127,6 @@ sed -i 's/^#FastConnectable =.*/FastConnectable = true/' /etc/bluetooth/main.con
 sed -i 's/^#JustWorksRepairing =.*/JustWorksRepairing = always/' /etc/bluetooth/main.conf
 
 
-rc-update add bluetooth default 2>&1
 rc-update add bluealsa default 2>&1
 service bluealsa start 2>&1   # just for use to eventually pair after install
 
