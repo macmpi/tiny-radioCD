@@ -7,7 +7,7 @@
 description="Connect Bluetooth speaker for MPD"
 
 depend() {
-    need bluetooth
+    need bluealsa
     after easy-setup
     before mpd
 }
