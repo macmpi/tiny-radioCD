@@ -7,7 +7,7 @@
 description="Setup BT and Wifi settings for tiny-radioCD"
 
 depend() {
-    after bluetooth
+    use bluealsa
     after sshd
     after dropbear
     before incrond
