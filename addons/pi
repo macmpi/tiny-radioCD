@@ -73,6 +73,9 @@ echo "dtparam=audio=on" >> /media/mmcblk0p1/usercfg.txt
 grep -q "hdmi_safe=1" /media/mmcblk0p1/usercfg.txt || \
 echo "hdmi_safe=1" >> /media/mmcblk0p1/usercfg.txt
 
+# set HDMI boost to max (will not add if there and commented)
+grep -q "config_hdmi_boost" /media/mmcblk0p1/usercfg.txt || \
+echo "config_hdmi_boost=11" >> /media/mmcblk0p1/usercfg.txt
 
 # ON/OFF button on GPIO3
 #dtoverlay=gpio-shutdown
