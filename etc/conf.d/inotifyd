@@ -1,0 +1,7 @@
+
+# Part of tiny-radioCD project, originally designed & hand-crafted by macmpi
+# check License at project home https://github.com/macmpi/tiny-radioCD
+
+
+INOTIFYD_ARGS="/usr/local/bin/radiocd-cmd /var/lib/mpd/music/--Menu--:a"
+INOTIFYD_USER=mpd
