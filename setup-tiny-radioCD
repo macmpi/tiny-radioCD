@@ -75,6 +75,10 @@ install -m644 "$srcdir"/etc/udev/rules.d/99-srX_change.rules /etc/udev/rules.d/9
 install -m644 "$srcdir"/etc/udev/rules.d/99-input.rules /etc/udev/rules.d/99-input.rules
 
 # Services
+install -m755 "$srcdir"/etc/init.d/inotifyd  /etc/init.d/inotifyd
+install -m644 "$srcdir"/etc/conf.d/inotifyd  /etc/conf.d/inotifyd
+rc-update add inotifyd default 2>&1
+
 install -m755 "$srcdir"/etc/init.d/easy-setup  /etc/init.d/easy-setup
 install -m755 "$srcdir"/usr/local/bin/easy-setup /usr/local/bin/easy-setup
 rc-update add easy-setup default 2>&1
@@ -142,15 +146,16 @@ adduser mpd cdrom
 install -m644 "$srcdir"/etc/mpd.conf /etc/mpd.conf
 rc-update add mpd default 2>&1
 
+service inotifyd stop 2>&1 # just in case running the script runs to update an existing install
 service incrond stop 2>&1 # just in case running the script runs to update an existing install
 service mpd start 2>&1
 while ! ( mpc > /dev/null 2>&1 ); do sleep 0.5 ; done  # let MPD settle
-mpc rescan 2>&1  # update mpd database: safe for --Menu-- as incrond is not running
+mpc rescan 2>&1  # update mpd database: safe for --Menu-- as inotifyd/incrond is not running
 mpc update 2>&1
 
 
 ###############################
-# Remote AVRCP control
+# Remote AVRCP control via acpid
 
 grep -q "uinput" /etc/modules || echo "uinput" >> /etc/modules
 
@@ -162,7 +167,7 @@ install -m755 "$srcdir"/etc/acpi/remote/* /etc/acpi/remote/
 
 
 ###############################
-# Remote mpc control over network
+# Remote mpc control over network via inotifyd (or incrond)
 
 # incrontab and visudo require mpd user & target files exist!
 grep -q "mpd" /etc/incron.allow || echo "mpd" >> /etc/incron.allow
@@ -190,6 +195,7 @@ grep -q "Raspberry Pi" /proc/cpuinfo && . "$srcdir"/addons/pi
 if !(grep -q "root=" /proc/cmdline); then  #we are not in sys mode (so data or diskless)
 	# stuff of matter for diskless or data mode
 	lbu include /usr/local/bin
+	lbu include /etc/init.d/inotifyd
 	lbu include /etc/init.d/connect-spkr
 	lbu include /etc/init.d/easy-setup
 	lbu include /etc/init.d/tiny-radiocd
