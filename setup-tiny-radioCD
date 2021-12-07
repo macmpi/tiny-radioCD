@@ -35,8 +35,10 @@ echo ""
 
 install -m644 "$srcdir"/etc/apk/repositories /etc/apk/repositories
 
-apk -u add sudo wpa_supplicant udev cdparanoia mpc avahi incron expect \
-mpd bluez-alsa --update-cache 2>&1 \
+apk -U upgrade
+
+apk add sudo wpa_supplicant udev cdparanoia mpc avahi incron expect \
+mpd bluez-alsa 2>&1 \
 || { echo >&2 "Base packages install failed, exiting! (for clues: apk -s fix)"; exit 1; }
 
 
