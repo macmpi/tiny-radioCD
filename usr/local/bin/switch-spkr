@@ -38,4 +38,4 @@ fi
 ###############################
 # If not in sys mode, commit /etc/asound.conf changes
 grep -q "root=" /proc/cmdline || \
-{ service incrond stop > /dev/null 2>&1; lbu commit -d; service incrond start > /dev/null 2>&1; } 
+{ service inotifyd stop > /dev/null 2>&1; lbu commit -d; service inotifyd start > /dev/null 2>&1; } 
