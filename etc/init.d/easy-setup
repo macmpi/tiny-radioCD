@@ -10,7 +10,7 @@ depend() {
     use bluealsa
     after sshd
     after dropbear
-    before incrond
+    before inotifyd
     before acpid
     before connect-spkr
 }
