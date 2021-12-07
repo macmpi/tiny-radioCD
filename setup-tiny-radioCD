@@ -174,7 +174,7 @@ grep -q "mpd" /etc/incron.allow || echo "mpd" >> /etc/incron.allow
 incrontab -u mpd "$srcdir"/incron-mpd 2>&1
 cat "$srcdir"/sudoers-mpd | (EDITOR="tee" visudo -f /etc/sudoers.d/010_mpd-nopasswd) 2>&1
 
-rc-update add incrond default 2>&1
+# rc-update add incrond default 2>&1
 rc-update add avahi-daemon default 2>&1
 
 
