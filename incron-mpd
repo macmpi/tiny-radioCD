@@ -1,1 +1,0 @@
-/var/lib/mpd/music/--Menu-- IN_CLOSE_NOWRITE,IN_NO_LOOP sudo /usr/local/bin/radiocd-cmd $#
