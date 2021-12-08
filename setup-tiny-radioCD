@@ -37,7 +37,7 @@ install -m644 "$srcdir"/etc/apk/repositories /etc/apk/repositories
 
 apk -U upgrade
 
-apk add sudo wpa_supplicant udev cdparanoia mpc avahi incron expect \
+apk add sudo wpa_supplicant udev cdparanoia mpc avahi expect \
 mpd bluez-alsa 2>&1 \
 || { echo >&2 "Base packages install failed, exiting! (for clues: apk -s fix)"; exit 1; }
 
@@ -147,7 +147,6 @@ install -m644 "$srcdir"/etc/mpd.conf /etc/mpd.conf
 rc-update add mpd default 2>&1
 
 service inotifyd stop 2>&1 # just in case running the script runs to update an existing install
-service incrond stop 2>&1 # just in case running the script runs to update an existing install
 service mpd start 2>&1
 while ! ( mpc > /dev/null 2>&1 ); do sleep 0.5 ; done  # let MPD settle
 mpc rescan 2>&1  # update mpd database: safe for --Menu-- as inotifyd/incrond is not running
@@ -169,12 +168,6 @@ install -m755 "$srcdir"/etc/acpi/remote/* /etc/acpi/remote/
 ###############################
 # Remote mpc control over network via inotifyd (or incrond)
 
-# incrontab and visudo require mpd user & target files exist!
-grep -q "mpd" /etc/incron.allow || echo "mpd" >> /etc/incron.allow
-incrontab -u mpd "$srcdir"/incron-mpd 2>&1
-cat "$srcdir"/sudoers-mpd | (EDITOR="tee" visudo -f /etc/sudoers.d/010_mpd-nopasswd) 2>&1
-
-# rc-update add incrond default 2>&1
 rc-update add avahi-daemon default 2>&1
 
 
@@ -206,7 +199,6 @@ if !(grep -q "root=" /proc/cmdline); then  #we are not in sys mode (so data or d
     	    lbu include /var/lib/mpd/music
     	    lbu include /var/lib/mpd/playlists
     	    lbu include /var/lib/bluetooth
-    	    lbu include /var/spool/incron/mpd
 	fi
 	lbu commit -d
 fi
