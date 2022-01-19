@@ -72,6 +72,12 @@ Reboot to take advantage of your new **tiny-radioCD**!
 ## Versions history:
 
 ```
+0.6: (TBD)
+- Update to Alpine 3.15
+- use busybox inotifyd instead of inrond
+- various fixes (HDMI, services dependencies,TSF stream,...)
+- Pi: enable Bluetooth via overlays
+
 0.5: (May 17th 2020)
 - initial release, Alpine 3.11
 ```
