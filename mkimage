@@ -37,8 +37,7 @@ if [ -z "$1" ]; then
 
     # admin user and tiny-radioCD pass, allows sudo, can log via ssh
     chmod +x create-user
-    ./create-user admin tiny-radioCD   # homedir /tmp	
-    echo "admin ALL = (ALL) ALL" | (EDITOR="tee" visudo -f /etc/sudoers.d/010_admin)
+    ./create-user admin wheel tiny-radioCD   # homedir /tmp	
 
     # enable dropbear ssh
     apk -u add dropbear
