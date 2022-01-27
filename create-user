@@ -6,14 +6,15 @@
 
 # creates a new user with username and pass provided as input
 set username [lindex $argv 0];
-set pass [lindex $argv 1];
+set group [lindex $argv 1];
+set pass [lindex $argv 2];
 set promp "#"
 
 
 log_user 0;      # suppress all logs to stdout: remove to enable or log_user 1
 
 set timeout 1
-spawn adduser -h /tmp $username
+spawn adduser -h /tmp -G $group $username
 
 expect "New password:"
 send "$pass\r"
