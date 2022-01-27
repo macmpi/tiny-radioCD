@@ -37,7 +37,7 @@ install -m644 "$srcdir"/etc/apk/repositories /etc/apk/repositories
 
 apk -U upgrade
 
-apk add sudo wpa_supplicant udev cdparanoia mpc avahi expect \
+apk add wpa_supplicant udev cdparanoia mpc avahi expect \
 mpd bluez-alsa 2>&1 \
 || { echo >&2 "Base packages install failed, exiting! (for clues: apk -s fix)"; exit 1; }
 
@@ -209,11 +209,11 @@ echo ""
 echo "     tiny-radioCD install is now complete !!
 
 For Bluetooth speaker association (and eventual remote command pairing), do:
-sudo bluetoothctl  (scan and then pair, connect, trust any wanted device)
+>bluetoothctl  (scan and then pair, connect, trust any wanted device)
 Take note of your speaker MAC Address XX:XX:XX:XX:XX:XX in your home directory:
-printf "XX:XX:XX:XX:XX:XX" > myspeaker
+>printf "XX:XX:XX:XX:XX:XX" > myspeaker
 Then finish speaker setup with the below command:
-sudo set-speaker myspeaker
+>set-speaker myspeaker
 
      Restart to enjoy your new tiny-radioCD !...
 "
