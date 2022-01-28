@@ -35,12 +35,18 @@ rm -f /etc/dropbear/dropbear_*_host_key
 # Optionally lock-out root and no admin if non-empty parameter
 if [ -z "$1" ]; then
 
-    # admin user and tiny-radioCD pass, allows sudo, can log via ssh
+    # create admin:wheel user with tiny-radioCD pass
     chmod +x create-user
-    ./create-user admin wheel tiny-radioCD   # homedir /tmp	
+    ./create-user admin wheel tiny-radioCD   # homedir /tmp
+    
+    # allow doas for wheel group
+    apk add doas
+    grep -q "permit persist :wheel" /etc/doas.d/doas.conf || \
+echo "permit persist :wheel" >> /etc/doas.d/doas.conf
+
 
     # enable dropbear ssh
-    apk -u add dropbear
+    apk add dropbear
     rc-update add dropbear default
     
     passwd -d root  # expiring it would require shadow package
