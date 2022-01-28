@@ -58,11 +58,11 @@ sudo ./setup-tiny-radioCD
 ```
 
 After install, bluetooth speaker pairing (and eventual remote command pairing) may be done under console or ssh (alternatively, check *[easy-setup](https://github.com/macmpi/tiny-radioCD/wiki)* section in Wiki):\
-`sudo bluetoothctl`     After a <u>scan</u>, make sure you <u>pair</u>, <u>connect</u> and <u>trust</u> your bluetooth devices.\
+`>bluetoothctl`     After a <u>scan</u>, make sure you <u>pair</u>, <u>connect</u> and <u>trust</u> your bluetooth devices.\
 Take note of your speaker MAC address `XX:XX:XX:XX:XX:XX` in your home directory with:\
-`printf "XX:XX:XX:XX:XX:XX" > myspeaker`\
+`>printf "XX:XX:XX:XX:XX:XX" > myspeaker`\
 Then finish speaker setup with the below command:\
-`sudo set-speaker myspeaker`    this command may greatly help switching between paired speakers later.\
+`>set-speaker myspeaker`    this command may greatly help switching between paired speakers later.\
 (if running in diskless mode, do not forget to commit changes after pairing: `lbu commit -d`)
 
 Reboot to take advantage of your new **tiny-radioCD**!
@@ -74,7 +74,8 @@ Reboot to take advantage of your new **tiny-radioCD**!
 ```
 0.6: (TBD)
 - Update to Alpine 3.15
-- use busybox inotifyd instead of inrond
+- replace sudo by doas
+- use busybox inotifyd instead of incrond
 - various fixes (HDMI, services dependencies,TSF stream,...)
 - Pi: enable Bluetooth via overlays
 
