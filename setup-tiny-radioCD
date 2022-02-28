@@ -156,7 +156,7 @@ mpc update 2>&1
 ###############################
 # Remote AVRCP control via acpid
 
-grep -q "uinput" /etc/modules || echo "uinput" >> /etc/modules
+grep -q "uinput" /etc/modules-load.d/uinput.conf || echo "uinput" > /etc/modules-load.d/uinput.conf
 
 install -m644 "$srcdir"/etc/acpi.map /etc/acpi.map
 install -m644 "$srcdir"/etc/acpid.conf /etc/acpid.conf
