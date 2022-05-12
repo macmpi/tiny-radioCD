@@ -41,7 +41,7 @@ sleep 3
 mpc clear > /dev/null 2>&1
 
 unzip -oq tiny-radioCD.zip > /tmp/update.log 2>&1
-cd tiny-radioCD
+cd tiny-radioCD*
 chmod +x setup-tiny-radioCD
 ./setup-tiny-radioCD > /tmp/update.log 2>&1
 
