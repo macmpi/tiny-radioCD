@@ -3,10 +3,8 @@
 # Part of tiny-radioCD project, originally designed & hand-crafted by macmpi
 # check License at project home https://github.com/macmpi/tiny-radioCD
 
-# incrontab provides filename (.mp3) that has been read as first parameter
-# inotify provides filename (.mp3) that has been read as third parameter
 
-case "${3%.*}" in
+case "$1" in
   "poweroff")
   	mpc clear > /dev/null 2>&1
   	mpc repeat off > /dev/null 2>&1
