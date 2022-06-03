@@ -1,0 +1,33 @@
+#!/bin/sh
+
+# Part of tiny-radioCD project, originally designed & hand-crafted by macmpi
+# check License at project home https://github.com/macmpi/tiny-radioCD
+
+
+# Bluetooth devices mays connect/disconnect frequently
+# Default referenced speaker may spontaneously
+# connect after startup (or reconnect after failure)
+# Lets find if reconnected bluetooth device is a speaker
+# and relink mpd accordingly
+
+# $1 contains input/eventX
+
+NEW=""
+
+# Search and grab any reference to a MAC address in udev info
+LIST="$( udevadm info -q all --attribute-walk /dev/"$1" \
+| grep -o "[[:xdigit:]:]\{17\}" )"
+
+while IFS='' read -r ADDR && [ -n "$ADDR" ]; do
+	bluetoothctl info "$ADDR" | grep -q "Connected: yes" || continue  #is not avail
+	NEW="$(printf "$ADDR" | tr a-z A-Z)"  #normalise into uppercase
+	break                    # we found it! 
+done <<EOF
+$LIST
+EOF
+
+# MPD needs then to be toggled (twice) to re-open the ALSA sound channel properly
+if [ -n "$NEW" ]; then
+	bluetoothctl info "$NEW" | grep -A 10 "Connected: yes" | grep -q "UUID: Audio Sink" \
+&& mpc toggle > /dev/null 2>&1 &&  mpc toggle > /dev/null 2>&1
+fi
