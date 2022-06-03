@@ -94,6 +94,7 @@ rc-update add connect-spkr default 2>&1
 # Utilities
 install -m755 "$srcdir"/usr/local/bin/init-playqueue /usr/local/bin/init-playqueue
 install -m755 "$srcdir"/usr/local/bin/btdevmngr /usr/local/bin/btdevmngr
+install -m755 "$srcdir"/usr/local/bin/refresh-spkr /usr/local/bin/refresh-spkr
 install -m755 "$srcdir"/usr/local/bin/radiocd-cmd /usr/local/bin/radiocd-cmd
 install -m755 "$srcdir"/usr/local/bin/radiocd-cmd_helper /usr/local/bin/radiocd-cmd_helper
 install -m755 "$srcdir"/usr/local/bin/set-speaker /usr/local/bin/set-speaker
