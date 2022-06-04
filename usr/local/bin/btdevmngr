@@ -6,7 +6,7 @@
 
 # Bluetooth devices mays connect/disconnect frequently
 # Some devices like remotes issue multiples /dev/input
-# Lets relaunch acpid and then reset mpd on reconnected speaker
+# Lets relaunch acpid and then relink mpd on reconnected speaker
 
 # $1 contains input/eventX
 
@@ -18,4 +18,4 @@
 # busybox bug: acpid may be crashed at boot if no input dev (hence no pid file) 
 service acpid status 2>&1 | grep -q crashed && /sbin/service acpid restart
 
-refresh-spkr $1 &
+relink-spkr $1 &
