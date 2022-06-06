@@ -7,19 +7,4 @@
 #Expects file containing BT MAC address passed as input
 MAC="$(cat $1 | tr a-z A-Z)"
 
-cat <<EOF > /etc/asound.conf
-pcm.speaker {
-        type plug
-        slave {
-            pcm {
-                type bluealsa
-                device $MAC
-                profile "a2dp"
-            }
-        }
-        hint {
-            show on
-            description "Bluetooth audio speaker"
-        }
-     }
-EOF
+sed -i "s/^defaults.bluealsa.device.*/defaults.bluealsa.device \"$MAC\"/" /etc/alsa/conf.d/20-bluealsa.conf
