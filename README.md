@@ -73,7 +73,7 @@ Reboot to take advantage of your new **tiny-radioCD**!
 
 ```
 0.6: (TBD)
-- Update to Alpine 3.15
+- Update to Alpine 3.16
 - replace sudo by doas
 - use busybox inotifyd instead of incrond
 - various fixes (HDMI, services dependencies,TSF stream,...)
