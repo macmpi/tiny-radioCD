@@ -8,5 +8,5 @@ RUN+="/usr/local/bin/init-playqueue 0"
 
 #insert CD, pass number of detected audio tracks for playlist generation
 KERNEL=="sr[0-9]", ACTION=="change", ENV{ID_CDROM_MEDIA}=="1", \
-ENV{ID_CDROM_MEDIA_TRACK_COUNT_AUDIO}=="[0-9]|[0-9][0-9]", \
+ENV{ID_CDROM_MEDIA_TRACK_COUNT_AUDIO}=="[0-9]*", \
 RUN+="/usr/local/bin/init-playqueue $env{ID_CDROM_MEDIA_TRACK_COUNT_AUDIO}"
