@@ -11,24 +11,14 @@ CUR="$(awk '{print $1}' /proc/uptime)"
 OLD="$CUR"
 TEST="0"
 
-
-exec 4<> /tmp/.STAMP    # Processes semaphore with time stamp
-flock -x 4
-
 [ -s /tmp/.STAMP ] && OLD="$(cat /tmp/.STAMP)"
 
 # Set time STAMP reference to trigger quick transitions follow-up
 printf "$CUR" > /tmp/.STAMP
-
-flock -u 4
-exec 4<&-
-
 
 . GLOBALS # needs full path so sh-l in shebang!
 [ "$CUR" != "$OLD" ] && TEST="$( echo "$CUR - $OLD < $G_DELAY" | bc )"
 
 [ "$TEST" -eq "1" ] && /etc/acpi/remote/SWITCH_SPKR
 mpc toggle > /dev/null 2>&1
-
-
 
