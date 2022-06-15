@@ -1,0 +1,12 @@
+#!/bin/sh -l
+
+# Part of tiny-radioCD project, originally designed & hand-crafted by macmpi
+# check License at project home https://github.com/macmpi/tiny-radioCD
+
+
+# simple helper to background init-playqueue when called from udev
+
+# discard CD triggers happening before tiny-radiocd init
+service tiny-radiocd status | grep -q "status: started" || exit
+
+init-playqueue $1 &
