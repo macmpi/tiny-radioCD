@@ -5,7 +5,7 @@
 
 
 # tiny-radioCD generic install script
-# Assumes baseline AlpineLinux setup already done in sys mode and internet access
+# Assumes baseline AlpineLinux setup already done and internet access available
 # Additional specific install scripts can be included in addons-section below
 
 version="0.6"
@@ -134,6 +134,16 @@ sed -i 's/^#ReconnectAttempts=.*/ReconnectAttempts=0/' /etc/bluetooth/main.conf
 sed -i 's/^#FastConnectable =.*/FastConnectable = true/' /etc/bluetooth/main.conf
 # bluez-5.56 AVRCP compatibility    https://github.com/bluez/bluez/issues/85
 sed -i 's/^#JustWorksRepairing =.*/JustWorksRepairing = always/' /etc/bluetooth/main.conf
+
+# bluealsa conf file cleanup to keep only a2dp-source profile
+# and maintain other eventual options
+for x in a2dp hfp hsp
+do
+    sed -i "s/-p $x-[a-z]*//g" /etc/conf.d/bluealsa
+    sed -i "s/--profile=$x-[a-z]*//g" /etc/conf.d/bluealsa
+done
+sed -i 's/^BLUEALSA_CONF=\"/BLUEALSA_CONF=\"-p a2dp-source /' /etc/conf.d/bluealsa
+sed -i 's/  */ /g' /etc/conf.d/bluealsa
 
 
 rc-update add bluealsa default 2>&1
