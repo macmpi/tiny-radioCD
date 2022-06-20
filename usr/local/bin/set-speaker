@@ -8,3 +8,9 @@
 MAC="$(cat $1 | tr a-z A-Z)"
 
 sed -i "s/^defaults.bluealsa.device.*/defaults.bluealsa.device \"$MAC\"/" /etc/alsa/conf.d/20-bluealsa.conf
+
+###############################
+# If not in sys mode, commit changes
+grep -q "root=" /proc/cmdline || \
+{ service inotifyd stop > /dev/null 2>&1; lbu commit -d; service inotifyd start > /dev/null 2>&1; }
+
