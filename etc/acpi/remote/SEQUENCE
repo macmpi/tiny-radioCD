@@ -4,4 +4,4 @@
 # check License at project home https://github.com/macmpi/tiny-radioCD
 
 
-mpc random off > /dev/null 2>&1
+mpc -q random off

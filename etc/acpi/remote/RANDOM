@@ -5,4 +5,4 @@
 
 
 # does not make sense for Radios as infinite tracks
-grep -q "RADIO" /tmp/.SOURCE || mpc random on > /dev/null 2>&1
+grep -q "RADIO" /tmp/.SOURCE || mpc -q random on

@@ -12,18 +12,18 @@
 
 . GLOBALS   # needs full path so sh-l in shebang!
 
-mpc clear > /dev/null 2>&1
+mpc -q clear
 rm -f /tmp/CD.m3u     # actual file, preserve original symlink
 
 # No CD drive: load Radios & exit
 [ -e /dev/sr0 ] || \
-{ mpc load Radios > /dev/null 2>&1; mpc random off > /dev/null 2>&1; \
-printf "RADIO" > /tmp/.SOURCE; mpc play > /dev/null 2>&1; exit; }
+{ mpc load Radios > /dev/null 2>&1; mpc -q random off; \
+printf "RADIO" > /tmp/.SOURCE; mpc -q play; exit; }
 
 # Entered with 0 tracks: load Radios & exit
 [ "$1" = "0" ] && \
-{ mpc load Radios > /dev/null 2>&1; mpc random off > /dev/null 2>&1; \
-printf "RADIO" > /tmp/.SOURCE; mpc play > /dev/null 2>&1; exit; }
+{ mpc load Radios > /dev/null 2>&1; mpc -q random off; \
+printf "RADIO" > /tmp/.SOURCE; mpc -q play; exit; }
 
 # Extract Audio CD tracks duration list in seconds
 LIST="$( cdparanoia -sQ -S"$G_CDSPEED" 2>&1 | grep '^\s*[0-9]*\.' | \
@@ -32,8 +32,8 @@ awk -F: '{ printf "%.0f\n", ($1 * 60) + $2 }' )"
 
 # No audio tracks: load Radios & exit
 [ -z "$LIST" ]  && \
-{ mpc load Radios > /dev/null 2>&1; mpc random off > /dev/null 2>&1; \
-printf "RADIO" > /tmp/.SOURCE; mpc play > /dev/null 2>&1; exit; }
+{ mpc load Radios > /dev/null 2>&1; mpc -q random off; \
+printf "RADIO" > /tmp/.SOURCE; mpc -q play; exit; }
 
 # Generate CD playlist in EXTM3U format (default for MPD)
 printf "#EXTM3U\n\n" > /tmp/CD.m3u
@@ -50,4 +50,4 @@ chown mpd:audio /tmp/CD.m3u
 
 mpc load CD > /dev/null 2>&1
 printf "CD" > /tmp/.SOURCE
-mpc play > /dev/null 2>&1
+mpc -q play

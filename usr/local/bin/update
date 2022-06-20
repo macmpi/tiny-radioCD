@@ -4,7 +4,7 @@
 # check License at project home https://github.com/macmpi/tiny-radioCD
 
 
-mpc clear > /dev/null 2>&1 # avoid multiple launches if launched via mpc on short playlist & repeat)
+mpc -q clear # avoid multiple launches if launched via mpc on short playlist & repeat)
 
 # Download, extract and execute updates
 # To be able to update this very file, actual execution can not be launched
@@ -33,12 +33,12 @@ cd /tmp
 wget -O tiny-radioCD.zip "$url" > /tmp/update.log 2>&1 || \
 { echo "Update download failed, exiting!" > /tmp/update.log; exit; }
 
-mpc clear > /dev/null 2>&1
-mpc repeat off > /dev/null 2>&1
-mpc add .tones/tone-update.mp3 > /dev/null 2>&1
-mpc play > /dev/null 2>&1
+mpc -q clear
+mpc -q repeat off
+mpc add .tones/tone-update.mp3
+mpc -q play
 sleep 3
-mpc clear > /dev/null 2>&1
+mpc -q clear
 
 unzip -oq tiny-radioCD.zip > /tmp/update.log 2>&1
 cd tiny-radioCD*

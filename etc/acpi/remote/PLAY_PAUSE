@@ -20,5 +20,5 @@ printf "$CUR" > /tmp/.STAMP
 [ "$CUR" != "$OLD" ] && TEST="$( echo "$CUR - $OLD < $G_DELAY" | bc )"
 
 [ "$TEST" -eq "1" ] && /etc/acpi/remote/SWITCH_SPKR
-mpc toggle > /dev/null 2>&1
+mpc -q toggle
 

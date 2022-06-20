@@ -5,4 +5,5 @@
 
 
 # toggle repeat mode on/off
-mpc repeat > /dev/null 2>&1
+mpc -q repeat
+

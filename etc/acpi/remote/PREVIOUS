@@ -19,6 +19,6 @@ TEST="0"
 if [ "$TEST" -eq "1" ]; then
     /etc/acpi/remote/POWEROFF
 else
-    mpc prev > /dev/null 2>&1
+    mpc -q prev
 fi
 

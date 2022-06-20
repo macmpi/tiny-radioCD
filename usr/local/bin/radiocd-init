@@ -5,9 +5,9 @@
 
 
 while ! ( mpc > /dev/null 2>&1 ); do sleep 0.5 ; done    # let MPD settle
-mpc update > /dev/null 2>&1     # rescan would access --Menu-- files
-mpc repeat on > /dev/null 2>&1	# set repeat mode to loop playlists
-mpc vol 100 > /dev/null 2>&1    # volume at 100%
+mpc -q update       # rescan would access --Menu-- files
+mpc -q repeat on    # set repeat mode to loop playlists
+mpc -q vol 100      # volume at 100%
 /usr/local/bin/init-playqueue   # empty parameter to force CD scan at startup
 
-#playback initiated by init-playqueue
+#playback is initiated by init-playqueue

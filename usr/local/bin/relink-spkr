@@ -29,5 +29,5 @@ EOF
 # MPD needs then to be toggled (twice) to re-open the ALSA sound channel properly
 if [ -n "$NEW" ]; then
 	bluetoothctl info "$NEW" | grep -A 10 "Connected: yes" | grep -q "UUID: Audio Sink" \
-&& mpc toggle > /dev/null 2>&1 &&  mpc toggle > /dev/null 2>&1
+&& mpc -q toggle &&  mpc -q toggle
 fi

@@ -4,4 +4,5 @@
 # check License at project home https://github.com/macmpi/tiny-radioCD
 
 
-mpc play 1 > /dev/null 2>&1
+mpc -q play 1
+

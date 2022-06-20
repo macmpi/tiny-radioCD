@@ -4,4 +4,4 @@
 # check License at project home https://github.com/macmpi/tiny-radioCD
 
 
-mpc seek 0% > /dev/null 2>&1
+mpc -q seek 0%

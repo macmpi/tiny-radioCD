@@ -18,8 +18,8 @@ TEST="0"
 
 if [ "$TEST" -eq "1" ]; then
     /etc/acpi/remote/EJECT
-    mpc toggle > /dev/null 2>&1
+    mpc -q toggle
 else
-    mpc next > /dev/null 2>&1
+    mpc -q next
 fi
 
