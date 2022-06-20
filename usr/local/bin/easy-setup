@@ -11,8 +11,8 @@ if !(grep -q "root=" /proc/cmdline); then
 [ -n "$(find /etc/dropbear/ -name 'dropbear_*_host_key' 2> /dev/null | head -1)" ] || \
 [ -n "$(find /etc/ssh/ -name 'ssh_host_*' 2> /dev/null | head -1)" ]; }; then
         rm -f /etc/tiny-radiocd_ssh_nokeys
-        lbu commit -d
-    fi    
+        service inotifyd stop > /dev/null 2>&1; lbu commit -d; service inotifyd start > /dev/null 2>&1
+    fi
 fi
 
 
@@ -78,7 +78,6 @@ echo "iface wlan0 inet dhcp" >> /etc/network/interfaces; TOUCHED=true; }
    if $TOUCHED && { service networking status | grep -q started; }; then
       service wpa_supplicant restart
       service networking restart
-      service mpd status | grep -q "started" && { mpc 2>&1 | grep -q "CURL failed"; } && mpc play
    fi
 fi
 
@@ -110,7 +109,7 @@ $DEVICES"
     LIST="$(bluetoothctl paired-devices)"  # responds with capitalized MAC & name
 
     [ -n "$DEVICES" ] && echo "Trying to pair new devices: $DEVICES"
-    
+
     while IFS='' read -r device && [ -n "$device" ]; do
           case "$LIST" in
              *"$device"*)			# already paired
@@ -121,11 +120,10 @@ $DEVICES"
                  address="$(pair-device "$device")" # pair-device returns MAC address
                  OK=$?
                  [ "$OK" -eq "0" ] && echo "$device paired successfully" || echo "$device pairing failed"
-             
+
                  if [ "$OK" -eq "0" ] && [ "$device" = "$SPKR" ] && \
-{ bluetoothctl info "$address" | grep -q "UUID: Audio Sink"; }; then 
+{ bluetoothctl info "$address" | grep -q "UUID: Audio Sink"; }; then
                     printf "$address" | set-speaker     # new speaker paired: set-it up for MPD
-                    service mpd status | grep -q "started" && service mpd restart > /dev/null 2>&1
                  fi
                  ;;
           esac
@@ -170,5 +168,7 @@ install -m644 -o mpd -g audio /etc/tiny-radioCD/tone-*.mp3 /var/lib/mpd/music/.t
 
 
 ###############################
-# If not in sys mode, commit changes (incrond not yet launched!)
-grep -q "root=" /proc/cmdline || lbu commit -d 
+# If not in sys mode, commit changes
+grep -q "root=" /proc/cmdline || \
+{ service inotifyd stop > /dev/null 2>&1; lbu commit -d; service inotifyd start > /dev/null 2>&1; }
+

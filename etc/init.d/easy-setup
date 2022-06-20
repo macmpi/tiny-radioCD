@@ -8,9 +8,10 @@ description="Setup BT and Wifi settings for tiny-radioCD"
 
 depend() {
     use bluealsa
-    after sshd
-    after dropbear
-    before inotifyd
+    use sshd
+    use dropbear
+    use inotifyd
+    before mpd
     before acpid
     before connect-spkr
 }
@@ -27,3 +28,4 @@ stop()
 	ebegin
 	eend $?
 }
+
