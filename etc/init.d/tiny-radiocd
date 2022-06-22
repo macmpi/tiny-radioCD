@@ -7,7 +7,7 @@
 description="tiny-radioCD init"
 
 depend() {
-	need mpd
+	use mpd
 }
 
 start()
