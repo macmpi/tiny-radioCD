@@ -37,12 +37,6 @@ ln -sfn brcmfmac43430-sdio.raspberrypi,3-model-b.txt \
 # Modify SD content: easy-setup and boot options
 mount -o remount,rw /dev/mmcblk0p1 /media/mmcblk0p1
 
-# Enable easy-setup on SD and add default config file sample 
-mkdir -p /media/mmcblk0p1/_tiny-radioCD
-install "$srcdir"/tiny-radioCD.conf /media/mmcblk0p1/_tiny-radioCD/tiny-radioCD.conf
-ln -sfn /media/mmcblk0p1/_tiny-radioCD /etc/tiny-radioCD
-
-
 # Pi eventual supplements for config.txt or usrcfg.txt
 
 # eventual gpu_mem MUST be set in original config.txt, not in include
