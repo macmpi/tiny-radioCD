@@ -8,6 +8,8 @@ description="tiny-radioCD init"
 
 depend() {
 	use mpd
+	use bluealsa
+	use inotifyd
 }
 
 start()

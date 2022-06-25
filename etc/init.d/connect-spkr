@@ -10,6 +10,7 @@ depend() {
     use bluealsa
     use mpd
     after easy-setup
+    before tiny-radiocd
 }
 
 start()
