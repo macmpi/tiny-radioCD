@@ -10,7 +10,7 @@ depend() {
     use bluealsa
     use sshd
     use dropbear
-    use inotifyd
+    before inotifyd
     before mpd
     before acpid
     before connect-spkr

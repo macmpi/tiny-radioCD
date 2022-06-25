@@ -6,12 +6,12 @@
 
 
 # diskless: check ssh key existence and save accordingly
-if !(grep -q "root=" /proc/cmdline); then
+if ! grep -q "root=" /proc/cmdline; then
     if [ -e /etc/tiny-radiocd_ssh_nokeys ] && { \
 [ -n "$(find /etc/dropbear/ -name 'dropbear_*_host_key' 2> /dev/null | head -1)" ] || \
 [ -n "$(find /etc/ssh/ -name 'ssh_host_*' 2> /dev/null | head -1)" ]; }; then
         rm -f /etc/tiny-radiocd_ssh_nokeys
-        service inotifyd stop > /dev/null 2>&1; lbu commit -d; service inotifyd start > /dev/null 2>&1
+        lbu commit -d
     fi
 fi
 
@@ -169,6 +169,4 @@ install -m644 -o mpd -g audio /etc/tiny-radioCD/tone-*.mp3 /var/lib/mpd/music/.t
 
 ###############################
 # If not in sys mode, commit changes
-grep -q "root=" /proc/cmdline || \
-{ service inotifyd stop > /dev/null 2>&1; lbu commit -d; service inotifyd start > /dev/null 2>&1; }
-
+grep -q "root=" /proc/cmdline || lbu commit -d
