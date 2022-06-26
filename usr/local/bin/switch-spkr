@@ -5,39 +5,29 @@
 
 
 # Switch Bluetooth speakers for MPD across all paired speakers
-curr_spkr="$( grep "defaults.bluealsa.device " /etc/alsa/conf.d/20-bluealsa.conf | \
-grep -o "[[:xdigit:]:]\{17\}" 2> /dev/null )" 
 
-LIST="$( bluetoothctl paired-devices | grep -o "[[:xdigit:]:]\{17\}" )"
-[ -n "$curr_spkr" ] && LIST="$( printf "$LIST" | grep -v "$curr_spkr" )"
-SPKR_LST=""
-while IFS='' read -r ADDR && [ -n "${ADDR}" ]; do
-	# select speaker only
-	bluetoothctl info "$ADDR" | grep -q "UUID: Audio Sink" && SPKR_LST="$SPKR_LST$ADDR "
+curr_spkr="$( grep "defaults.bluealsa.device " /etc/alsa/conf.d/20-bluealsa.conf | \
+grep -o "[[:xdigit:]:]\{17\}" 2> /dev/null )"
+
+PAIRED="$( bluetoothctl paired-devices )"
+while read LINE; do
+	MAC="$( echo "$LINE" | grep -o "[[:xdigit:]:]\{17\}" )"
+	[ -z "$MAC" ] && break
+	[ "$MAC" = "$curr_spkr" ] && continue
+
+	AUDIO=$(bluetoothctl info "$MAC" | grep -c "UUID: Audio Sink")
+	if [ "$AUDIO" -eq "1" ]; then
+		touch /tmp/.SW_SPKR		# set flag so monitor-spkr ignores connections
+		if bluetoothctl connect "$MAC" > /dev/null 2>&1; then
+			printf "$MAC" | set-speaker
+			bluetoothctl disconnect "$curr_spkr" > /dev/null 2>&1
+			service mpd restart > /dev/null 2>&1
+			break
+		fi
+	fi
 done <<EOF
-$LIST
+$PAIRED
 EOF
 
-SPKR_LST="${SPKR_LST%?}"  # remove last character (trailing space)
-CNCT=false
+rm /tmp/.SW_SPKR > /dev/null 2>&1	# let monitor-spkr operate normaly
 
-if [ -n "$SPKR_LST" ]; then
-    for ADDR in $SPKR_LST; do
-        printf "$ADDR" | set-speaker  # for next MPD restart (via udev rule or other)
-        bluetoothctl info "$ADDR" | grep -q "Connected: yes" && { CNCT=true; break; } 
-        bluetoothctl connect "$ADDR" > /dev/null 2>&1 && { CNCT=true; break; }
-    done
-fi
-
-if $CNCT; then
-    service mpd restart > /dev/null 2>&1 # we do NOT count on udev rule to restart MPD
-    bluetoothctl disconnect "$curr_spkr" > /dev/null 2>&1
-else
-    [ -n "$curr_spkr" ] && printf "$curr_spkr" | set-speaker  # all failed, restore original setting
-fi 
-
-
-###############################
-# If not in sys mode, commit /etc/asound.conf changes
-grep -q "root=" /proc/cmdline || \
-{ service inotifyd stop > /dev/null 2>&1; lbu commit -d; service inotifyd start > /dev/null 2>&1; }
