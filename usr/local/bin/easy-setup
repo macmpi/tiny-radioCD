@@ -7,127 +7,118 @@
 
 # diskless: check ssh key existence and save accordingly
 if ! grep -q "root=" /proc/cmdline; then
-    if [ -e /etc/tiny-radiocd_ssh_nokeys ] && { \
-[ -n "$(find /etc/dropbear/ -name 'dropbear_*_host_key' 2> /dev/null | head -1)" ] || \
-[ -n "$(find /etc/ssh/ -name 'ssh_host_*' 2> /dev/null | head -1)" ]; }; then
-        rm -f /etc/tiny-radiocd_ssh_nokeys
-        lbu commit -d
-    fi
+	if [ -e /etc/tiny-radiocd_ssh_nokeys ] && { \
+	[ -n "$(find /etc/dropbear/ -name 'dropbear_*_host_key' 2> /dev/null | head -1)" ] || \
+	[ -n "$(find /etc/ssh/ -name 'ssh_host_*' 2> /dev/null | head -1)" ]; }; then
+		rm -f /etc/tiny-radiocd_ssh_nokeys
+		lbu commit -d
+	fi
 fi
 
 
 # Manage Settings and files
 [ -d /etc/tiny-radioCD ] || exit   #no easy config directory
 
+. /etc/tiny-radioCD/tiny-radioCD.conf
+
 ###############################
 # Wifi setup: we add new SSID before exiting config
 # this ensure older config fallback (and multi-site usage)
-SSID="$(grep '^SSID=\"' /etc/tiny-radioCD/tiny-radioCD.conf | sed -E 's/SSID="(.*)".*/\1/')"
-PASS="$(grep '^Password=\"' /etc/tiny-radioCD/tiny-radioCD.conf | sed -E 's/Password="(.*)".*/\1/')"
-SEC="$(grep '^Security=\"' /etc/tiny-radioCD/tiny-radioCD.conf | sed -E 's/Security="(.*)".*/\1/')"
-COUNTRY="$(grep '^Country=\"' /etc/tiny-radioCD/tiny-radioCD.conf | sed -E 's/Country="(.*)".*/\1/')"
 
 # Only touch if wireless interface exists and SSID set
-if [ -e /sys/class/net/wlan0 ] && [ -n "$SSID" ]; then
+if [ -e /sys/class/net/wlan0 ] && [ -n "${SSID// /}" ]; then
 
-   echo "Setting $SSID wifi network..."
-   TOUCHED=false
-   # Take care of network interfaces: add wlanO if not available
-   cat /etc/network/interfaces | grep -q "wlan0" || \
-{ echo "auto wlan0" >> /etc/network/interfaces; \
-echo "iface wlan0 inet dhcp" >> /etc/network/interfaces; TOUCHED=true; }
+	echo "Setting $SSID wifi network..."
+	TOUCHED=false
+	# Take care of network interfaces: add wlanO if not available
+	cat /etc/network/interfaces | grep -q "wlan0" || \
+	{ echo "auto wlan0" >> /etc/network/interfaces; \
+	echo "iface wlan0 inet dhcp" >> /etc/network/interfaces; TOUCHED=true; }
 
 # Take care of wpa_supplicant
 
-   case "$SEC" in
-      "WPA-PSK")
-          NEW="network={
+	case "$Security" in
+		"WPA-PSK")
+			NEW="network={
 	ssid=\"$SSID\"
-	key_mgmt=$SEC
-	psk=\"$PASS\"
+	key_mgmt=$Security
+	psk=\"$Password\"
 }"
-         ;;
-      "open")
-          NEW="network={
+		;;
+		"open")
+			NEW="network={
 	ssid=\"$SSID\"
-	key_mgmt=$SEC
+	key_mgmt=$Security
 }"
-         ;;
-   esac
+		;;
+	esac
 
-   COUNTRY="country=$COUNTRY"
-   CONFIG="$(grep -v "country=" /etc/wpa_supplicant/wpa_supplicant.conf 2> /dev/null)"
+	Country="country=$Country"
+	CONFIG="$(grep -v "country=" /etc/wpa_supplicant/wpa_supplicant.conf 2> /dev/null)"
 
-   case "$CONFIG" in
-      *"$NEW"*) 	# config already exists, do nothing
-      ;;
+	case "$CONFIG" in
+		*"$NEW"*)	# config already exists, do nothing
+		;;
 
-      *)           # add new config first
-         printf "$COUNTRY\n\n" > /tmp/wpa_supplicant.conf
-         printf "$NEW\n\n" >> /tmp/wpa_supplicant.conf
-         printf "$CONFIG\n" >> /tmp/wpa_supplicant.conf
-         mv /tmp/wpa_supplicant.conf /etc/wpa_supplicant/wpa_supplicant.conf
-         TOUCHED=true
+		*)			# add new config first
+			printf "$Country\n\n" > /tmp/wpa_supplicant.conf
+			printf "$NEW\n\n" >> /tmp/wpa_supplicant.conf
+			printf "$CONFIG\n" >> /tmp/wpa_supplicant.conf
+			mv /tmp/wpa_supplicant.conf /etc/wpa_supplicant/wpa_supplicant.conf
+			TOUCHED=true
+		;;
+	esac
 
-      ;;
+	rm -f /tmp/wpa_supplicant.conf
 
-   esac
-      
-   rm -f /tmp/wpa_supplicant.conf
-   
-   if $TOUCHED && { service networking status | grep -q started; }; then
-      service wpa_supplicant restart
-      service networking restart
-   fi
+	if $TOUCHED && { service networking status | grep -q started; }; then
+		service wpa_supplicant restart
+		service networking restart
+	fi
 fi
 
 
 ###############################
 # Bluetooth pairing and speaker setup if successful (and is one)
 # Bluetooth device references may be MAC address or names (or parts of)
-# Take everything between enclosing quotes
 
-if [ -e /sys/class/bluetooth/hci0 ]; then
+if [ -e /sys/class/bluetooth/hci0 ] && [ -n "${Speaker// /}${Remote// /}" ]; then
+	# if they are MAC addresses, make them CAPITALS
+	echo "$Speaker" | grep -q "[[:xdigit:]:]\{17\}" && \
+	Speaker="$( printf "$Speaker" | grep -o "[[:xdigit:]:]\{17\}" | tr a-z A-Z )"
 
-    SPKR="$(grep '^Speaker=\"' /etc/tiny-radioCD/tiny-radioCD.conf | sed -E 's/Speaker="(.*)".*/\1/')"
-    RMT="$(grep '^Remote=\"' /etc/tiny-radioCD/tiny-radioCD.conf | sed -E 's/Remote="(.*)".*/\1/')"
+	echo "$Remote" | grep -q "[[:xdigit:]:]\{17\}" && \
+	Remote="$( printf "$Remote" | grep -o "[[:xdigit:]:]\{17\}" | tr a-z A-Z )"
 
-    # if they are MAC addresses, make them CAPITALS
-    echo "$SPKR" | grep -q "[[:xdigit:]:]\{17\}" && \
-    SPKR="$( printf "$SPKR" | grep -o "[[:xdigit:]:]\{17\}" | tr a-z A-Z )"
-
-    echo "$RMT" | grep -q "[[:xdigit:]:]\{17\}" && \
-    RMT="$( printf "$RMT" | grep -o "[[:xdigit:]:]\{17\}" | tr a-z A-Z )"
-
-    DEVICES=""   # may be lines with spaces
-    [ -n "$RMT" ] && DEVICES="$RMT
+	DEVICES=""	# may be lines with spaces
+	[ -n "$Remote" ] && DEVICES="$Remote
 "
-    [ -n "$SPKR" ] && DEVICES="$SPKR
+	[ -n "$Speaker" ] && DEVICES="$Speaker
 $DEVICES"
 
-    #  Bluetooth pairing & speaker connection
-    LIST="$(bluetoothctl paired-devices)"  # responds with capitalized MAC & name
+	#  Bluetooth pairing & speaker connection
+	LIST="$(bluetoothctl paired-devices)"	# responds with capitalized MAC & name
 
-    [ -n "$DEVICES" ] && echo "Trying to pair new devices: $DEVICES"
+	[ -n "$DEVICES" ] && echo "Trying to pair new devices: $DEVICES"
 
-    while IFS='' read -r device && [ -n "$device" ]; do
-          case "$LIST" in
-             *"$device"*)			# already paired
-                 echo "$device was already paired"
-                 ;;
-             *)	     			# not yet paired, lets do it!
-                 #echo pairing "$device"
-                 address="$(pair-device "$device")" # pair-device returns MAC address
-                 OK=$?
-                 [ "$OK" -eq "0" ] && echo "$device paired successfully" || echo "$device pairing failed"
+	while IFS='' read -r device && [ -n "$device" ]; do
+		case "$LIST" in
+			*"$device"*)	# already paired
+				echo "$device was already paired"
+			;;
+			*)				# not yet paired, lets do it!
+				#echo pairing "$device"
+				address="$(pair-device "$device")"	# pair-device returns MAC address
+				OK=$?
+				[ "$OK" -eq "0" ] && echo "$device paired successfully" || echo "$device pairing failed"
 
-                 if [ "$OK" -eq "0" ] && [ "$device" = "$SPKR" ] && \
-{ bluetoothctl info "$address" | grep -q "UUID: Audio Sink"; }; then
-                    printf "$address" | set-speaker     # new speaker paired: set-it up for MPD
-                 fi
-                 ;;
-          esac
-    done <<EOF
+				if [ "$OK" -eq "0" ] && [ "$device" = "$Speaker" ] && \
+				{ bluetoothctl info "$address" | grep -q "UUID: Audio Sink"; }; then
+					printf "$address" | set-speaker	# new speaker paired: set-it up for MPD
+				fi
+			;;
+		esac
+	done <<EOF
 $DEVICES
 EOF
 
@@ -170,3 +161,4 @@ install -m644 -o mpd -g audio /etc/tiny-radioCD/tone-*.mp3 /var/lib/mpd/music/.t
 ###############################
 # If not in sys mode, commit changes
 grep -q "root=" /proc/cmdline || lbu commit -d
+
