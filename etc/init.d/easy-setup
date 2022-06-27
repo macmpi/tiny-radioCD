@@ -7,19 +7,19 @@
 description="Setup BT and Wifi settings for tiny-radioCD"
 
 depend() {
-    use bluealsa
-    use sshd
-    use dropbear
-    before inotifyd
-    before mpd
-    before acpid
-    before connect-spkr
+	use bluealsa
+	before sshd
+	before dropbear
+	before inotifyd
+	before mpd
+	before acpid
+	before connect-spkr
 }
 
 start()
 {
 	ebegin "Starting tiny-radioCD easy-setup"
-        /usr/local/bin/easy-setup
+		/usr/local/bin/easy-setup
 	eend $?
 }
 
