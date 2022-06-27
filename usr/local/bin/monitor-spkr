@@ -7,27 +7,41 @@
 # Bluetooth devices mays connect/disconnect frequently
 # Default referenced speaker may spontaneously
 # connect after startup (or reconnect after failure)
-# Lets find if reconnected bluetooth device is a speaker
-# and relink mpd accordingly
+# Lets find if reconnected bluetooth speaker is default one
+# and relink mpd or disconnect accordingly
 
-# $1 contains input/eventX
 
-NEW=""
+# inspired by:
+# https://github.com/Arkq/bluez-alsa/wiki/Using-BlueALSA-as-default-ALSA-PCM#automation
 
-# Search and grab any reference to a MAC address in udev info
-LIST="$( udevadm info -q all --attribute-walk /dev/"$1" \
-| grep -o "[[:xdigit:]:]\{17\}" )"
+# create a temporary named pipe to communicate with bluealsa-cli monitor
+FIFO_PATH=$(mktemp -u)
+mkfifo $FIFO_PATH
+# attach it to unused file descriptor FIFO_FD
+exec 4<>$FIFO_PATH
+# unlink the named pipe
+rm $FIFO_PATH
 
-while IFS='' read -r ADDR && [ -n "$ADDR" ]; do
-	bluetoothctl info "$ADDR" | grep -q "Connected: yes" || continue  #is not avail
-	NEW="$(printf "$ADDR" | tr a-z A-Z)"  #normalise into uppercase
-	break                    # we found it! 
-done <<EOF
-$LIST
-EOF
+# make sure the pipeline is shut down if this script interrupted
+trap "kill %1; exec 4>&-; exit 0" INT TERM
 
-# MPD needs then to be toggled (twice) to re-open the ALSA sound channel properly
-if [ -n "$NEW" ]; then
-	bluetoothctl info "$NEW" | grep -A 10 "Connected: yes" | grep -q "UUID: Audio Sink" \
-&& mpc -q toggle &&  mpc -q toggle
-fi
+# start bluealsa-cli monitor in background
+bluealsa-cli --quiet monitor >&4 &
+
+while read LINE; do
+	echo "$LINE" >> /tmp/trace
+	if ! [ -f /tmp/.SW_SPKR ]; then
+		MAC="$( echo "$LINE" | grep "PCMAdded" | grep -o "[[:xdigit:]_]\{18\}" | sed 's/_/:/g' | cut -c2- )"
+		echo "$MAC" >> /tmp/trace
+		if [ -n "$MAC" ]; then
+			if ( grep -q "$MAC" /etc/alsa/conf.d/20-bluealsa.conf ) ;then
+				echo "YES" >> /tmp/trace
+				mpc -q toggle; mpc -q toggle
+			else
+				echo "NO" >> /tmp/trace
+				bluetoothctl disconnect "$MAC" > /dev/null 2>&1
+			fi
+		fi
+	fi
+done <&4
+
