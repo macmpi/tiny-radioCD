@@ -7,16 +7,15 @@
 description="Connect Bluetooth speaker for MPD"
 
 depend() {
-    use bluealsa
-    use mpd
-    after easy-setup
-    before tiny-radiocd
+	use bluealsa
+	after mpd
+	before tiny-radiocd
 }
 
 start()
 {
 	ebegin "Connecting MPD Bluetooth speaker"
-        /usr/local/bin/connect-spkr
+		/usr/local/bin/connect-spkr
 	eend $?
 }
 
