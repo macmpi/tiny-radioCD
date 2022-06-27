@@ -4,8 +4,8 @@
 # check License at project home https://github.com/macmpi/tiny-radioCD
 
 
-#Expects file containing BT MAC address passed as input
-MAC="$(cat $1 | grep -o "[[:xdigit:]:]\{17\}" | tr a-z A-Z )"
+#Expects BT MAC address passed as input
+MAC="$( printf "$1" | grep -o "[[:xdigit:]:]\{17\}" | tr a-z A-Z )"
 
 [ -z "$MAC" ] && { logger -s -t set-speaker "Failed; wrong MAC address"; exit 1;}
 

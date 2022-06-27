@@ -59,11 +59,9 @@ sudo ./setup-tiny-radioCD
 
 After install, bluetooth speaker pairing (and eventual remote command pairing) may be done under console or ssh (alternatively, check *[easy-setup](https://github.com/macmpi/tiny-radioCD/wiki)* section in Wiki):\
 `>bluetoothctl`     After a <u>scan</u>, make sure you <u>pair</u>, <u>connect</u> and <u>trust</u> your bluetooth devices.\
-Take note of your speaker MAC address `XX:XX:XX:XX:XX:XX` in your home directory with:\
-`>printf "XX:XX:XX:XX:XX:XX" > myspeaker`\
+Take note of your speaker MAC address `XX:XX:XX:XX:XX:XX`\
 Then finish speaker setup with the below command:\
-`>set-speaker myspeaker`    this command may greatly help switching between paired speakers later.\
-(if running in diskless mode, do not forget to commit changes after pairing: `lbu commit -d`)
+`>set-speaker "XX:XX:XX:XX:XX:XX"`\
 
 Reboot to take advantage of your new **tiny-radioCD**!
 

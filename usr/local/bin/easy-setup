@@ -107,7 +107,7 @@ if [ -e /sys/class/bluetooth/hci0 ] && [ -n "${Speaker// /}${Remote// /}" ]; the
 					logger -s -t easy-setup "$device paired successfully"
 					[ "$device" = "$Speaker" ] && \
 					{ bluetoothctl info "$address" | grep -q "UUID: Audio Sink"; } && \
-					printf "$address" | set-speaker	# new speaker paired: set-it up for MPD
+					set-speaker "$address"		# new speaker paired: set-it up for MPD
 				else
 					logger -s -t easy-setup "$device pairing failed"
 				fi

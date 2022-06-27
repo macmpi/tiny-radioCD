@@ -19,7 +19,7 @@ while read LINE; do
 	if [ "$AUDIO" -eq "1" ]; then
 		touch /tmp/.SW_SPKR		# set flag so monitor-spkr ignores connections
 		if bluetoothctl connect "$MAC" > /dev/null 2>&1; then
-			printf "$MAC" | set-speaker
+			set-speaker "$MAC"
 			bluetoothctl disconnect "$curr_spkr" > /dev/null 2>&1
 			service mpd restart > /dev/null 2>&1
 			break
