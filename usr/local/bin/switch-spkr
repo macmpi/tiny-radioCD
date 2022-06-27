@@ -15,7 +15,7 @@ while read LINE; do
 	[ -z "$MAC" ] && break
 	[ "$MAC" = "$curr_spkr" ] && continue
 
-	if bluetoothctl info "$address" | grep -q "UUID: Audio Sink"; then
+	if bluetoothctl info "$MAC" | grep -q "UUID: Audio Sink"; then
 		touch /tmp/.SW_SPKR		# set flag so monitor-spkr ignores connections
 		if bluetoothctl connect "$MAC" > /dev/null 2>&1; then
 			set-speaker "$MAC"
