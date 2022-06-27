@@ -241,10 +241,9 @@ echo "     tiny-radioCD install is now complete !!
 
 For Bluetooth speaker association (and eventual remote command pairing), do:
 >bluetoothctl  (scan and then pair, connect, trust any wanted device)
-Take note of your speaker MAC Address XX:XX:XX:XX:XX:XX in your home directory:
->printf "XX:XX:XX:XX:XX:XX" > myspeaker
+Take note of your speaker MAC Address XX:XX:XX:XX:XX:XX
 Then finish speaker setup with the below command:
->set-speaker myspeaker
+>set-speaker "XX:XX:XX:XX:XX:XX"
 
      Restart to enjoy your new tiny-radioCD !...
 "
