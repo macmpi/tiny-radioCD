@@ -106,7 +106,7 @@ if [ -e /sys/class/bluetooth/hci0 ] && [ -n "${Speaker// /}${Remote// /}" ]; the
 				if address="$( pair-device "$device" )"; then	# pair-device returns MAC address
 					logger -s -t easy-setup "$device paired successfully"
 					[ "$device" = "$Speaker" ] && \
-					{ bluetoothctl info "$address" | grep -q "UUID: Audio Sink"; } && \
+					bluetoothctl info "$address" | grep -q "UUID: Audio Sink" && \
 					set-speaker "$address"		# new speaker paired: set-it up for MPD
 				else
 					logger -s -t easy-setup "$device pairing failed"
