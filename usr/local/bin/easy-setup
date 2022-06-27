@@ -28,7 +28,7 @@ fi
 # Only touch if wireless interface exists and SSID set
 if [ -e /sys/class/net/wlan0 ] && [ -n "${SSID// /}" ]; then
 
-	echo "Setting $SSID wifi network..."
+	logger -s -t easy-setup "Setting $SSID wifi network..."
 	TOUCHED=false
 	# Take care of network interfaces: add wlanO if not available
 	cat /etc/network/interfaces | grep -q "wlan0" || \
@@ -120,31 +120,33 @@ fi
 ###############################
 # Import customized GLOBALS
 [ -s /etc/tiny-radioCD/GLOBALS ] && \
-{ echo "Importing GLOBALS"; install -m644 /etc/tiny-radioCD/GLOBALS /usr/local/bin/GLOBALS  > /dev/null 2>&1; }
+{ logger -s -t easy-setup "Importing GLOBALS"; install -m644 /etc/tiny-radioCD/GLOBALS /usr/local/bin/GLOBALS > /dev/null 2>&1; }
 
 
 ###############################
 # Import custom mpd.conf
 [ -s /etc/tiny-radioCD/mpd.conf ] && \
-{ echo "Importing mpd.conf"; install -m644 /etc/tiny-radioCD/mpd.conf /etc/mpd.conf  > /dev/null 2>&1; }
+{ logger -s -t easy-setup "Importing mpd.conf"; install -m644 /etc/tiny-radioCD/mpd.conf /etc/mpd.conf > /dev/null 2>&1; }
 
 
 ###############################
 # Import custom remotes-mapping
 [ -s /etc/tiny-radioCD/Remotes.map ] && \
-{ echo "Importing Remotes.map"; install -m644 /etc/tiny-radioCD/Remotes.map /etc/acpi.map  > /dev/null 2>&1; }
+{ logger -s -t easy-setup "Importing Remotes.map"; install -m644 /etc/tiny-radioCD/Remotes.map /etc/acpi.map > /dev/null 2>&1; }
 
 
 ###############################
 # If custom playlists exist, pull-them into MPD playlist directory
-[ -n "$(find /etc/tiny-radioCD/ -name '*.m3u' | head -1)" ] && echo "Importing Playlists"
-install -m644 -o mpd -g audio /etc/tiny-radioCD/*.m3u /var/lib/mpd/playlists/.  > /dev/null 2>&1
+[ -n "$(find /etc/tiny-radioCD/ -name '*.m3u' | head -1)" ] && \
+{ logger -s -t easy-setup "Importing Playlists"; \
+install -m644 -o mpd -g audio /etc/tiny-radioCD/*.m3u /var/lib/mpd/playlists/. > /dev/null 2>&1; }
 
 
 ###############################
 # If custom tones exist, pull-them into MPD music/.tones directory
-[ -n "$(find /etc/tiny-radioCD/ -name '*.mp3' | head -1)" ] && echo "Importing system tones"
-install -m644 -o mpd -g audio /etc/tiny-radioCD/tone-*.mp3 /var/lib/mpd/music/.tones/. > /dev/null 2>&1
+[ -n "$(find /etc/tiny-radioCD/ -name '*.mp3' | head -1)" ] && \
+{ logger -s -t easy-setup "Importing system tones"; \
+install -m644 -o mpd -g audio /etc/tiny-radioCD/tone-*.mp3 /var/lib/mpd/music/.tones/. > /dev/null 2>&1; }
 
 
 ###############################
