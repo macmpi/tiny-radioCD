@@ -90,37 +90,30 @@ if [ -e /sys/class/bluetooth/hci0 ] && [ -n "${Speaker// /}${Remote// /}" ]; the
 	echo "$Remote" | grep -q "[[:xdigit:]:]\{17\}" && \
 	Remote="$( printf "$Remote" | grep -o "[[:xdigit:]:]\{17\}" | tr a-z A-Z )"
 
-	DEVICES=""	# may be lines with spaces
-	[ -n "$Remote" ] && DEVICES="$Remote
-"
-	[ -n "$Speaker" ] && DEVICES="$Speaker
-$DEVICES"
+	logger -s -t easy-setup "Trying to pair new devices: $Speaker $Remote"
 
 	#  Bluetooth pairing & speaker connection
 	LIST="$(bluetoothctl paired-devices)"	# responds with capitalized MAC & name
 
-	[ -n "$DEVICES" ] && echo "Trying to pair new devices: $DEVICES"
-
-	while IFS='' read -r device && [ -n "$device" ]; do
+	for device in Speaker Remote; do
+		device=$( eval "echo \$$device" )
+		[ -z "$device" ] && continue
 		case "$LIST" in
 			*"$device"*)	# already paired
-				echo "$device was already paired"
+				logger -s -t easy-setup "$device was already paired"
 			;;
 			*)				# not yet paired, lets do it!
-				#echo pairing "$device"
-				address="$(pair-device "$device")"	# pair-device returns MAC address
-				OK=$?
-				[ "$OK" -eq "0" ] && echo "$device paired successfully" || echo "$device pairing failed"
-
-				if [ "$OK" -eq "0" ] && [ "$device" = "$Speaker" ] && \
-				{ bluetoothctl info "$address" | grep -q "UUID: Audio Sink"; }; then
+				if address="$( pair-device "$device" )"; then	# pair-device returns MAC address
+					logger -s -t easy-setup "$device paired successfully"
+					[ "$device" = "$Speaker" ] && \
+					{ bluetoothctl info "$address" | grep -q "UUID: Audio Sink"; } && \
 					printf "$address" | set-speaker	# new speaker paired: set-it up for MPD
+				else
+					logger -s -t easy-setup "$device pairing failed"
 				fi
 			;;
 		esac
-	done <<EOF
-$DEVICES
-EOF
+	done
 
 fi
 
