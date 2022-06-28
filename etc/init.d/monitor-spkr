@@ -4,25 +4,15 @@
 # check License at project home https://github.com/macmpi/tiny-radioCD
 
 
-description="tiny-radioCD init"
+description="Manages incoming bluetooth speaker connections"
+
+name=$RC_SVCNAME
+command="/usr/local/bin/monitor-spkr"
+pidfile="/run/$RC_SVCNAME.pid"
+command_background="yes"
 
 depend() {
-	use mpd
 	use bluealsa
-	use monitor-spkr
-	use inotifyd
-}
-
-start()
-{
-	ebegin "Starting tiny-radioCD"
-		/usr/local/bin/radiocd-init
-	eend $?
-}
-
-stop()
-{
-	ebegin
-	eend $?
+	use mpd
 }
 

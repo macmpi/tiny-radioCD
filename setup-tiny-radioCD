@@ -75,11 +75,11 @@ install -m644 "$srcdir"/etc/udev/rules.d/99-srX_change.rules /etc/udev/rules.d/9
 install -m644 "$srcdir"/etc/udev/rules.d/99-input.rules /etc/udev/rules.d/99-input.rules
 
 # Services
-install -m755 "$srcdir"/etc/init.d/inotifyd  /etc/init.d/inotifyd
-install -m644 "$srcdir"/etc/conf.d/inotifyd  /etc/conf.d/inotifyd
+install -m755 "$srcdir"/etc/init.d/inotifyd /etc/init.d/inotifyd
+install -m644 "$srcdir"/etc/conf.d/inotifyd /etc/conf.d/inotifyd
 rc-update add inotifyd default 2>&1
 
-install -m755 "$srcdir"/etc/init.d/easy-setup  /etc/init.d/easy-setup
+install -m755 "$srcdir"/etc/init.d/easy-setup /etc/init.d/easy-setup
 install -m755 "$srcdir"/usr/local/bin/easy-setup /usr/local/bin/easy-setup
 rc-update add easy-setup default 2>&1
 
@@ -87,15 +87,18 @@ install -m755 "$srcdir"/etc/init.d/tiny-radiocd /etc/init.d/tiny-radiocd
 install -m755 "$srcdir"/usr/local/bin/radiocd-init /usr/local/bin/radiocd-init
 rc-update add tiny-radiocd default 2>&1
 
-install -m755 "$srcdir"/etc/init.d/connect-spkr  /etc/init.d/connect-spkr
+install -m755 "$srcdir"/etc/init.d/connect-spkr /etc/init.d/connect-spkr
 install -m755 "$srcdir"/usr/local/bin/connect-spkr /usr/local/bin/connect-spkr
 rc-update add connect-spkr default 2>&1
+
+install -m755 "$srcdir"/etc/init.d/monitor-spkr /etc/init.d/monitor-spkr
+install -m755 "$srcdir"/usr/local/bin/monitor-spkr /usr/local/bin/monitor-spkr
+rc-update add monitor-spkr default 2>&1
 
 # Utilities
 install -m755 "$srcdir"/usr/local/bin/init-playqueue /usr/local/bin/init-playqueue
 install -m755 "$srcdir"/usr/local/bin/init-playqueue_helper /usr/local/bin/init-playqueue_helper
 install -m755 "$srcdir"/usr/local/bin/btdevmngr /usr/local/bin/btdevmngr
-install -m755 "$srcdir"/usr/local/bin/monitor-spkr /usr/local/bin/monitor-spkr
 install -m755 "$srcdir"/usr/local/bin/radiocd-cmd /usr/local/bin/radiocd-cmd
 install -m755 "$srcdir"/usr/local/bin/radiocd-cmd_helper /usr/local/bin/radiocd-cmd_helper
 install -m755 "$srcdir"/usr/local/bin/set-speaker /usr/local/bin/set-speaker
@@ -203,16 +206,18 @@ if !(grep -q "root=" /proc/cmdline); then  #we are not in sys mode (so data or d
 	# stuff of matter for diskless or data mode
 	lbu include /usr/local/bin
 	lbu include /etc/init.d/inotifyd
-	lbu include /etc/init.d/connect-spkr
 	lbu include /etc/init.d/easy-setup
 	lbu include /etc/init.d/tiny-radiocd
+	lbu include /etc/init.d/connect-spkr
+	lbu include /etc/init.d/monitor-spkr
+
 	
 	if !(grep -q "/var" /etc/fstab); then #we are not in data mode: hence diskless only
-	    # stuff from /var for diskless mode
-    	    lbu include /var/lib/mpd/tag_cache
-    	    lbu include /var/lib/mpd/music
-    	    lbu include /var/lib/mpd/playlists
-    	    lbu include /var/lib/bluetooth
+		# stuff from /var for diskless mode
+			lbu include /var/lib/mpd/tag_cache
+			lbu include /var/lib/mpd/music
+			lbu include /var/lib/mpd/playlists
+			lbu include /var/lib/bluetooth
 	fi
 	
 	# Enable easy-setup on storage and add default config file sample
