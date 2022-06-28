@@ -6,13 +6,11 @@
 
 
 # diskless: check ssh key existence and save accordingly
-if ! grep -q "root=" /proc/cmdline; then
-	if [ -e /etc/tiny-radiocd_ssh_nokeys ] && { \
-	[ -n "$(find /etc/dropbear/ -name 'dropbear_*_host_key' 2> /dev/null | head -1)" ] || \
-	[ -n "$(find /etc/ssh/ -name 'ssh_host_*' 2> /dev/null | head -1)" ]; }; then
+if [ -e /etc/tiny-radiocd_ssh_nokeys ] && { \
+[ -n "$(find /etc/dropbear/ -name 'dropbear_*_host_key' 2> /dev/null | head -1)" ] || \
+[ -n "$(find /etc/ssh/ -name 'ssh_host_*' 2> /dev/null | head -1)" ]; }; then
 		rm -f /etc/tiny-radiocd_ssh_nokeys
 		lbu commit -d
-	fi
 fi
 
 
@@ -20,6 +18,7 @@ fi
 [ -d /etc/tiny-radioCD ] || exit   #no easy config directory
 
 . /etc/tiny-radioCD/tiny-radioCD.conf
+TOUCHED=false
 
 ###############################
 # Wifi setup: we add new SSID before exiting config
@@ -29,11 +28,12 @@ fi
 if [ -e /sys/class/net/wlan0 ] && [ -n "${SSID// /}" ]; then
 
 	logger -s -t easy-setup "Setting $SSID wifi network..."
-	TOUCHED=false
 	# Take care of network interfaces: add wlanO if not available
-	cat /etc/network/interfaces | grep -q "wlan0" || \
-	{ echo "auto wlan0" >> /etc/network/interfaces; \
-	echo "iface wlan0 inet dhcp" >> /etc/network/interfaces; TOUCHED=true; }
+	if ! cat /etc/network/interfaces | grep -q "wlan0"; then
+		echo "auto wlan0" >> /etc/network/interfaces
+		echo "iface wlan0 inet dhcp" >> /etc/network/interfaces
+		TOUCHED=true
+	fi
 
 # Take care of wpa_supplicant
 
@@ -104,6 +104,7 @@ if [ -e /sys/class/bluetooth/hci0 ] && [ -n "${Speaker// /}${Remote// /}" ]; the
 			;;
 			*)				# not yet paired, lets do it!
 				if address="$( pair-device "$device" )"; then	# pair-device returns MAC address
+					TOUCHED=true
 					logger -s -t easy-setup "$device paired successfully"
 					[ "$device" = "$Speaker" ] && \
 					bluetoothctl info "$address" | grep -q "UUID: Audio Sink" && \
@@ -119,35 +120,44 @@ fi
 
 ###############################
 # Import customized GLOBALS
-[ -s /etc/tiny-radioCD/GLOBALS ] && \
-{ logger -s -t easy-setup "Importing GLOBALS"; install -m644 /etc/tiny-radioCD/GLOBALS /usr/local/bin/GLOBALS > /dev/null 2>&1; }
-
+if [ -s /etc/tiny-radioCD/GLOBALS ]; then
+	logger -s -t easy-setup "Importing GLOBALS"
+	install -m644 /etc/tiny-radioCD/GLOBALS /usr/local/bin/GLOBALS > /dev/null 2>&1
+	TOUCHED=true
+fi
 
 ###############################
 # Import custom mpd.conf
-[ -s /etc/tiny-radioCD/mpd.conf ] && \
-{ logger -s -t easy-setup "Importing mpd.conf"; install -m644 /etc/tiny-radioCD/mpd.conf /etc/mpd.conf > /dev/null 2>&1; }
+if [ -s /etc/tiny-radioCD/mpd.conf ]; then
+	logger -s -t easy-setup "Importing mpd.conf"
+	install -m644 /etc/tiny-radioCD/mpd.conf /etc/mpd.conf > /dev/null 2>&1
+	TOUCHED=true
+fi
 
 
 ###############################
 # Import custom remotes-mapping
-[ -s /etc/tiny-radioCD/Remotes.map ] && \
-{ logger -s -t easy-setup "Importing Remotes.map"; install -m644 /etc/tiny-radioCD/Remotes.map /etc/acpi.map > /dev/null 2>&1; }
-
+if [ -s /etc/tiny-radioCD/Remotes.map ]; then
+	logger -s -t easy-setup "Importing Remotes.map"
+	install -m644 /etc/tiny-radioCD/Remotes.map /etc/acpi.map > /dev/null 2>&1
+	TOUCHED=true
+fi
 
 ###############################
 # If custom playlists exist, pull-them into MPD playlist directory
-[ -n "$(find /etc/tiny-radioCD/ -name '*.m3u' | head -1)" ] && \
-{ logger -s -t easy-setup "Importing Playlists"; \
-install -m644 -o mpd -g audio /etc/tiny-radioCD/*.m3u /var/lib/mpd/playlists/. > /dev/null 2>&1; }
-
+if [ -n "$(find /etc/tiny-radioCD/ -name '*.m3u' | head -1)" ]; then
+	logger -s -t easy-setup "Importing Playlists"
+	install -m644 -o mpd -g audio /etc/tiny-radioCD/*.m3u /var/lib/mpd/playlists/. > /dev/null 2>&1
+	TOUCHED=true
+fi
 
 ###############################
 # If custom tones exist, pull-them into MPD music/.tones directory
-[ -n "$(find /etc/tiny-radioCD/ -name '*.mp3' | head -1)" ] && \
-{ logger -s -t easy-setup "Importing system tones"; \
-install -m644 -o mpd -g audio /etc/tiny-radioCD/tone-*.mp3 /var/lib/mpd/music/.tones/. > /dev/null 2>&1; }
-
+if [ -n "$(find /etc/tiny-radioCD/ -name '*.mp3' | head -1)" ]; then
+	logger -s -t easy-setup "Importing system tones"
+	install -m644 -o mpd -g audio /etc/tiny-radioCD/tone-*.mp3 /var/lib/mpd/music/.tones/. > /dev/null 2>&1
+	TOUCHED=true
+fi
 
 ###############################
 # other stuff?...
@@ -155,5 +165,7 @@ install -m644 -o mpd -g audio /etc/tiny-radioCD/tone-*.mp3 /var/lib/mpd/music/.t
 
 ###############################
 # If not in sys mode, commit changes
-grep -q "root=" /proc/cmdline || lbu commit -d
+if $TOUCHED; then
+	grep -q "root=" /proc/cmdline || lbu commit -d
+fi
 
