@@ -5,9 +5,12 @@
 
 
 while ! ( mpc > /dev/null 2>&1 ); do sleep 0.5 ; done    # let MPD settle
-mpc -q update       # rescan would access --Menu-- files
-mpc -q repeat on    # set repeat mode to loop playlists
-mpc -q vol 100      # volume at 100%
-/usr/local/bin/init-playqueue   # empty parameter to force CD scan at startup
+mpc -q update		# rescan would access --Menu-- files
+mpc -q repeat on	# set repeat mode to loop playlists
+mpc -q vol 100		# volume at 100%
 
+/usr/local/bin/init-playqueue	# empty parameter to force CD scan at startup
 #playback is initiated by init-playqueue
+
+logger -s -t radiocd-init "tiny-radioCD started in $(awk '{print $1}' /proc/uptime) seconds"
+
