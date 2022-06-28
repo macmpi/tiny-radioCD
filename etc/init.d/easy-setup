@@ -6,6 +6,10 @@
 
 description="Setup BT and Wifi settings for tiny-radioCD"
 
+name="easy-setup for tiny-radioCD"
+command="/usr/local/bin/easy-setup"
+pidfile="/run/$RC_SVCNAME.pid"
+
 depend() {
 	use bluealsa
 	before sshd
@@ -15,18 +19,5 @@ depend() {
 	before acpid
 	before connect-spkr
 	before monitor-spkr
-}
-
-start()
-{
-	ebegin "Starting tiny-radioCD easy-setup"
-		/usr/local/bin/easy-setup
-	eend $?
-}
-
-stop()
-{
-	ebegin
-	eend $?
 }
 

@@ -4,24 +4,15 @@
 # check License at project home https://github.com/macmpi/tiny-radioCD
 
 
-description="Connect Bluetooth speaker for MPD"
+description="Connects Bluetooth speaker for MPD"
+
+name="Bluetooth speaker connection"
+command="/usr/local/bin/connect-spkr"
+pidfile="/run/$RC_SVCNAME.pid"
 
 depend() {
 	use bluealsa
 	after mpd
 	before tiny-radiocd
-}
-
-start()
-{
-	ebegin "Connecting MPD Bluetooth speaker"
-		/usr/local/bin/connect-spkr
-	eend $?
-}
-
-stop()
-{
-	ebegin
-	eend $?
 }
 

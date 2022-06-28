@@ -6,7 +6,7 @@
 
 description="Manages incoming bluetooth speaker connections"
 
-name=$RC_SVCNAME
+name="Bluetooth speaker monitoring"
 command="/usr/local/bin/monitor-spkr"
 pidfile="/run/$RC_SVCNAME.pid"
 command_background="yes"

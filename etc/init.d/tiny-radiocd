@@ -6,23 +6,14 @@
 
 description="tiny-radioCD init"
 
+name="tiny-radioCD"
+command="/usr/local/bin/radiocd-init"
+pidfile="/run/$RC_SVCNAME.pid"
+
 depend() {
 	use mpd
 	use bluealsa
 	use monitor-spkr
 	use inotifyd
-}
-
-start()
-{
-	ebegin "Starting tiny-radioCD"
-		/usr/local/bin/radiocd-init
-	eend $?
-}
-
-stop()
-{
-	ebegin
-	eend $?
 }
 
