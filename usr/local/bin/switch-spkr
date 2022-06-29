@@ -6,6 +6,7 @@
 
 # Switch Bluetooth speakers for MPD across all paired speakers
 
+SWITCHED=false
 curr_spkr="$( grep "defaults.bluealsa.device " /etc/alsa/conf.d/20-bluealsa.conf | \
 grep -o "[[:xdigit:]:]\{17\}" 2> /dev/null )"
 
@@ -18,6 +19,7 @@ while read LINE; do
 	if bluetoothctl info "$MAC" | grep -q "UUID: Audio Sink"; then
 		touch /tmp/.SW_SPKR		# set flag so monitor-spkr ignores connections
 		if bluetoothctl connect "$MAC" > /dev/null 2>&1; then
+			SWITCHED=true
 			set-speaker "$MAC"
 			bluetoothctl disconnect "$curr_spkr" > /dev/null 2>&1
 			service mpd restart > /dev/null 2>&1
@@ -29,4 +31,5 @@ $PAIRED
 EOF
 
 rm /tmp/.SW_SPKR > /dev/null 2>&1	# let monitor-spkr operate normaly
+$SWITCHED
 

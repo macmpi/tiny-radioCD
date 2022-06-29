@@ -6,5 +6,5 @@
 
 # Tries to connect last used-speakers, if fails try other paired speakers
 bluetoothctl connect "$( grep "defaults.bluealsa.device " /etc/alsa/conf.d/20-bluealsa.conf | \
-grep -o "[[:xdigit:]:]\{17\}" 2> /dev/null )" \
-> /dev/null 2>&1 || switch-spkr
+grep -o "[[:xdigit:]:]\{17\}" 2> /dev/null )" > /dev/null 2>&1 || switch-spkr
+
