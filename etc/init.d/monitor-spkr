@@ -12,7 +12,7 @@ pidfile="/run/$RC_SVCNAME.pid"
 command_background="yes"
 
 depend() {
-	use bluealsa
+	need bluealsa
 	use mpd
 }
 
