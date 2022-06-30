@@ -169,3 +169,5 @@ if $TOUCHED; then
 	grep -q "root=" /proc/cmdline || lbu commit -d
 fi
 
+exit 0
+
