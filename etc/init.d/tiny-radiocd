@@ -4,16 +4,25 @@
 # check License at project home https://github.com/macmpi/tiny-radioCD
 
 
-description="tiny-radioCD init"
-
-name="tiny-radioCD"
-command="/usr/local/bin/radiocd-init"
-pidfile="/run/$RC_SVCNAME.pid"
+description="tiny-radioCD startup"
 
 depend() {
 	use mpd
 	use bluealsa
 	use monitor-spkr
 	use inotifyd
+}
+
+start()
+{
+	ebegin "Starting tiny-radioCD"
+		/usr/local/bin/radiocd-init
+	eend $?
+}
+
+stop()
+{
+	ebegin
+	eend $?
 }
 
