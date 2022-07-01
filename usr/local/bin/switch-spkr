@@ -20,12 +20,13 @@ while read -r LINE; do
 		touch /tmp/.SW_SPKR		# set flag so monitor-spkr ignores connections
 		if bluetoothctl connect "$MAC" > /dev/null 2>&1; then
 			SWITCHED=true
+			logger -s -t switch-spkr "Connected to ${LINE/Device $MAC /}"
 			set-speaker "$MAC"
 			bluetoothctl disconnect "$curr_spkr" > /dev/null 2>&1
 			service mpd restart > /dev/null 2>&1
 			break
 		else
-			logger -s -t switch-spkr "Failed to connect to $MAC"
+			logger -s -t switch-spkr "Failed to connect to ${LINE/Device $MAC /}"
 		fi
 	fi
 done <<EOF
