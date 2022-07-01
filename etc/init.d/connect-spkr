@@ -19,9 +19,3 @@ start()
 	eend $?
 }
 
-stop()
-{
-	ebegin
-	eend $?
-}
-
