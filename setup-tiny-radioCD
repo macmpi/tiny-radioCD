@@ -142,12 +142,12 @@ sed -i 's/^#JustWorksRepairing =.*/JustWorksRepairing = always/' /etc/bluetooth/
 # and maintain other eventual options
 for x in a2dp hfp hsp
 do
-    sed -i "s/-p $x-[a-z]*//g" /etc/conf.d/bluealsa
-    sed -i "s/--profile=$x-[a-z]*//g" /etc/conf.d/bluealsa
+	sed -i -e "s/-p $x-[a-z]*//g" \
+	-e "s/--profile=$x-[a-z]*//g" /etc/conf.d/bluealsa
 done
-sed -i 's/^BLUEALSA_CONF=\"/BLUEALSA_CONF=\"-p a2dp-source /' /etc/conf.d/bluealsa
-sed -i 's/  */ /g' /etc/conf.d/bluealsa
-sed -i 's/  *\"$/\"/' /etc/conf.d/bluealsa
+sed -i -e 's/^BLUEALSA_CONF=\"/BLUEALSA_CONF=\"-p a2dp-source /' \
+-e 's/  */ /g' \
+-e 's/  *\"$/\"/' /etc/conf.d/bluealsa
 
 
 rc-update add bluealsa default 2>&1
