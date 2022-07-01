@@ -11,7 +11,7 @@ curr_spkr="$( grep "defaults.bluealsa.device " /etc/alsa/conf.d/20-bluealsa.conf
 grep -o "[[:xdigit:]:]\{17\}" 2> /dev/null )"
 
 PAIRED="$( bluetoothctl paired-devices )"
-while read LINE; do
+while read -r LINE; do
 	MAC="$( echo "$LINE" | grep -o "[[:xdigit:]:]\{17\}" )"
 	[ -z "$MAC" ] && break
 	[ "$MAC" = "$curr_spkr" ] && continue
@@ -24,6 +24,8 @@ while read LINE; do
 			bluetoothctl disconnect "$curr_spkr" > /dev/null 2>&1
 			service mpd restart > /dev/null 2>&1
 			break
+		else
+			logger -s -t switch-spkr "Failed to connect to $MAC"
 		fi
 	fi
 done <<EOF
