@@ -27,7 +27,7 @@ TOUCHED=false
 # Only touch if wireless interface exists and SSID set
 if [ -e /sys/class/net/wlan0 ] && [ -n "${SSID// /}" ]; then
 
-	logger -s -t easy-setup "Setting $SSID wifi network..."
+	logger -st ${0##*/} "Setting $SSID wifi network..."
 	# Take care of network interfaces: add wlanO if not available
 	if ! cat /etc/network/interfaces | grep -q "wlan0"; then
 		echo "auto wlan0" >> /etc/network/interfaces
@@ -90,7 +90,7 @@ if [ -e /sys/class/bluetooth/hci0 ] && [ -n "${Speaker// /}${Remote// /}" ]; the
 	echo "$Remote" | grep -q "[[:xdigit:]:]\{17\}" && \
 	Remote="$( printf "$Remote" | grep -o "[[:xdigit:]:]\{17\}" | tr a-z A-Z )"
 
-	logger -s -t easy-setup "Trying to pair new devices: $Speaker $Remote"
+	logger -st ${0##*/} "Trying to pair new devices: $Speaker $Remote"
 
 	#  Bluetooth pairing & speaker connection
 	LIST="$(bluetoothctl paired-devices)"	# responds with capitalized MAC & name
@@ -100,17 +100,17 @@ if [ -e /sys/class/bluetooth/hci0 ] && [ -n "${Speaker// /}${Remote// /}" ]; the
 		[ -z "$device" ] && continue
 		case "$LIST" in
 			*"$device"*)	# already paired
-				logger -s -t easy-setup "$device was already paired"
+				logger -st ${0##*/} "$device was already paired"
 			;;
 			*)				# not yet paired, lets do it!
 				if address="$( pair-device "$device" )"; then	# pair-device returns MAC address
 					TOUCHED=true
-					logger -s -t easy-setup "$device paired successfully"
+					logger -st ${0##*/} "$device paired successfully"
 					[ "$device" = "$Speaker" ] && \
 					bluetoothctl info "$address" | grep -q "UUID: Audio Sink" && \
 					set-speaker "$address"		# new speaker paired: set-it up for MPD
 				else
-					logger -s -t easy-setup "$device pairing failed"
+					logger -st ${0##*/} "$device pairing failed"
 				fi
 			;;
 		esac
@@ -121,7 +121,7 @@ fi
 ###############################
 # Import customized GLOBALS
 if [ -s /etc/tiny-radioCD/GLOBALS ]; then
-	logger -s -t easy-setup "Importing GLOBALS"
+	logger -st ${0##*/} "Importing GLOBALS"
 	install -m644 /etc/tiny-radioCD/GLOBALS /usr/local/bin/GLOBALS > /dev/null 2>&1
 	TOUCHED=true
 fi
@@ -129,7 +129,7 @@ fi
 ###############################
 # Import custom mpd.conf
 if [ -s /etc/tiny-radioCD/mpd.conf ]; then
-	logger -s -t easy-setup "Importing mpd.conf"
+	logger -st ${0##*/} "Importing mpd.conf"
 	install -m644 /etc/tiny-radioCD/mpd.conf /etc/mpd.conf > /dev/null 2>&1
 	TOUCHED=true
 fi
@@ -138,7 +138,7 @@ fi
 ###############################
 # Import custom remotes-mapping
 if [ -s /etc/tiny-radioCD/Remotes.map ]; then
-	logger -s -t easy-setup "Importing Remotes.map"
+	logger -st ${0##*/} "Importing Remotes.map"
 	install -m644 /etc/tiny-radioCD/Remotes.map /etc/acpi.map > /dev/null 2>&1
 	TOUCHED=true
 fi
@@ -146,7 +146,7 @@ fi
 ###############################
 # If custom playlists exist, pull-them into MPD playlist directory
 if [ -n "$(find /etc/tiny-radioCD/ -name '*.m3u' | head -1)" ]; then
-	logger -s -t easy-setup "Importing Playlists"
+	logger -st ${0##*/} "Importing Playlists"
 	install -m644 -o mpd -g audio /etc/tiny-radioCD/*.m3u /var/lib/mpd/playlists/. > /dev/null 2>&1
 	TOUCHED=true
 fi
@@ -154,7 +154,7 @@ fi
 ###############################
 # If custom tones exist, pull-them into MPD music/.tones directory
 if [ -n "$(find /etc/tiny-radioCD/ -name '*.mp3' | head -1)" ]; then
-	logger -s -t easy-setup "Importing system tones"
+	logger -st ${0##*/} "Importing system tones"
 	install -m644 -o mpd -g audio /etc/tiny-radioCD/tone-*.mp3 /var/lib/mpd/music/.tones/. > /dev/null 2>&1
 	TOUCHED=true
 fi

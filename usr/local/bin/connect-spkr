@@ -8,7 +8,7 @@
 bluetoothctl connect "$( grep "defaults.bluealsa.device " /etc/alsa/conf.d/20-bluealsa.conf | \
 grep -o "[[:xdigit:]:]\{17\}" 2> /dev/null )" > /dev/null 2>&1 || switch-spkr
 
-[ $? -eq "1" ] && logger -s -t connect-spkr "Failed to connect any Bluetooth speaker"
+[ $? -eq "1" ] && logger -st ${0##*/} "Failed to connect any Bluetooth speaker"
 
 exit 0
 
