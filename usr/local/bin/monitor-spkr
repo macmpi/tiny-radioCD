@@ -28,17 +28,16 @@ trap "kill %1; exec 4>&-; exit 0" INT TERM
 # start bluealsa-cli monitor in background
 bluealsa-cli --quiet monitor >&4 &
 
-while read LINE; do
-	echo "$LINE" >> /tmp/trace
+while read -r LINE; do
 	if ! [ -f /tmp/.SW_SPKR ]; then
 		MAC="$( echo "$LINE" | grep "PCMAdded" | grep -o "[[:xdigit:]_]\{18\}" | sed 's/_/:/g' | cut -c2- )"
-		echo "$MAC" >> /tmp/trace
 		if [ -n "$MAC" ]; then
+			ID="$( bluetoothctl paired-devices | grep "$MAC" )"
 			if ( grep -q "$MAC" /etc/alsa/conf.d/20-bluealsa.conf ) ;then
-				echo "YES" >> /tmp/trace
+				logger -t ${0##*/} "Connected to ${ID/Device $MAC /}"
 				mpc -q toggle; mpc -q toggle
 			else
-				echo "NO" >> /tmp/trace
+				logger -t ${0##*/} "Disconnecting ${ID/Device $MAC /}"
 				bluetoothctl disconnect "$MAC" > /dev/null 2>&1
 			fi
 		fi

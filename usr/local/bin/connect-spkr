@@ -5,8 +5,15 @@
 
 
 # Tries to connect last used-speakers, if fails try other paired speakers
-bluetoothctl connect "$( grep "defaults.bluealsa.device " /etc/alsa/conf.d/20-bluealsa.conf | \
-grep -o "[[:xdigit:]:]\{17\}" 2> /dev/null )" > /dev/null 2>&1 || switch-spkr
+MAC=$( grep "defaults.bluealsa.device " /etc/alsa/conf.d/20-bluealsa.conf | \
+	grep -o "[[:xdigit:]:]\{17\}" 2> /dev/null )
+
+if bluetoothctl connect "$MAC" > /dev/null 2>&1; then
+	ID="$( bluetoothctl paired-devices | grep "$MAC" )"
+	logger -st ${0##*/} "Connected to ${ID/Device $MAC /}"
+else
+	switch-spkr
+fi
 
 [ $? -eq "1" ] && logger -st ${0##*/} "Failed to connect any Bluetooth speaker"
 
