@@ -7,19 +7,20 @@
 SOURCE="$(cat /tmp/.SOURCE)"
 
 case "$SOURCE" in
-  "RADIO")
-    [ -f /var/lib/mpd/playlists/CD.m3u ] || exit #do nothing if no CD
-    mpc -q clear
-    mpc load CD > /dev/null 2>&1
-    printf "CD" > /tmp/.SOURCE
-    ;;
+	"RADIO")
+		[ -f /var/lib/mpd/playlists/CD.m3u ] || exit #do nothing if no CD
+		mpc -q clear
+		mpc load CD > /dev/null 2>&1
+		printf "CD" > /tmp/.SOURCE
+	;;
 
-  "CD")
-    mpc -q clear
-    mpc load Radios > /dev/null 2>&1  # always available
-    mpc -q random off  # useless in Radio mode
-    printf "RADIO" > /tmp/.SOURCE
-    ;;
+	"CD")
+		mpc -q clear
+		mpc load Radios > /dev/null 2>&1	# always available
+		mpc -q random off		# useless in Radio mode
+		printf "RADIO" > /tmp/.SOURCE
+	;;
 esac
 
 mpc -q play
+

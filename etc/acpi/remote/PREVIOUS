@@ -17,8 +17,8 @@ TEST="0"
 [ "$CUR" != "$PLAY" ] && TEST="$( echo "$CUR - $PLAY < $G_DELAY" | bc )"
 
 if [ "$TEST" -eq "1" ]; then
-    /etc/acpi/remote/POWEROFF
+	/etc/acpi/remote/POWEROFF
 else
-    mpc -q prev
+	mpc -q prev
 fi
 

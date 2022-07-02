@@ -6,3 +6,4 @@
 # inotify provides filename (.mp3) that has been read as third parameter
 
 radiocd-cmd "${3%.*}"
+

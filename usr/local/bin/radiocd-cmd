@@ -5,36 +5,37 @@
 
 
 case "$1" in
-  "poweroff")
-  	mpc -q clear
-  	mpc -q repeat off
-  	mpc add .tones/tone-poweroff.mp3
-  	mpc -q play
-  	sleep 3
-  	mpc -q clear
-    poweroff
-    ;;
-  "reboot")
-  	mpc -q clear
-  	mpc -q repeat off
-  	mpc add .tones/tone-reboot.mp3
-  	mpc -q play
-  	sleep 3
-  	mpc -q clear
-    reboot
-    ;;
-  "eject")
-  	grep -q "CD" /tmp/.SOURCE && mpc -q clear  # stop only if playing CD
-  	rm -f /tmp/CD.m3u     # actual file, preserve original symlink
-    /lib/udev/cdrom_id -e /dev/sr0 > /dev/null 2>&1
-    ;;
-  "switch-spkr")
-    switch-spkr
-    ;;
-  "connect-spkr")
-    connect-spkr
-    ;; 
-  "update")
-    update
-    ;;    
+	"poweroff")
+		mpc -q clear
+		mpc -q repeat off
+		mpc add .tones/tone-poweroff.mp3
+		mpc -q play
+		sleep 3
+		mpc -q clear
+		poweroff
+	;;
+	"reboot")
+		mpc -q clear
+		mpc -q repeat off
+		mpc add .tones/tone-reboot.mp3
+		mpc -q play
+		sleep 3
+		mpc -q clear
+		reboot
+	;;
+	"eject")
+		grep -q "CD" /tmp/.SOURCE && mpc -q clear	# stop only if playing CD
+		rm -f /tmp/CD.m3u		# actual file, preserve original symlink
+		/lib/udev/cdrom_id -e /dev/sr0 > /dev/null 2>&1
+	;;
+	"switch-spkr")
+		switch-spkr
+	;;
+	"connect-spkr")
+		connect-spkr
+	;;
+	"update")
+		update
+	;;
 esac
+

@@ -12,18 +12,18 @@
 set reference [lindex $argv 0]; # ref might be MAC address (preferred) or a name portion
 set address ""
 set prompt "#"
-set passkey "nil";        
+set passkey "nil";
 
 proc abort {} {
-   global prompt
-   global address
-   expect $prompt
-   if { "$address" != "" } {
-      send "remove $address\r"
-      expect $prompt
-   }
-   send "exit\r"
-   expect eof
+	global prompt
+	global address
+	expect $prompt
+	if { "$address" != "" } {
+		send "remove $address\r"
+		expect $prompt
+	}
+	send "exit\r"
+	expect eof
 }
 
 log_user 0;      # suppress all logs to stdout: remove to enable or log_user 1
@@ -33,42 +33,42 @@ expect $prompt
 set timeout 1;   # if by chance is in available devices list, we save discovery
 send "devices\r"
 expect {
-   "Device *$reference" {regexp {.*(([0-9A-F]{2}:){5}([0-9A-F]{2}))} $expect_out(buffer) -> address}
+	"Device *$reference" {regexp {.*(([0-9A-F]{2}:){5}([0-9A-F]{2}))} $expect_out(buffer) -> address}
 }
 expect $prompt
 
 
 if { "$address" == "" } {
-   send "scan on\r";      #initiate discovery & search reference
-   set timeout 60
-   expect {
-      -re "\[^L\]\\]\\sDevice\\s.*$reference" \
-{regexp {.*(([0-9A-F]{2}:){5}([0-9A-F]{2}))} $expect_out(buffer) -> address}
-      timeout {abort; exit 1}
-   }
+	send "scan on\r";      #initiate discovery & search reference
+	set timeout 60
+	expect {
+		-re "\[^L\]\\]\\sDevice\\s.*$reference" \
+		{regexp {.*(([0-9A-F]{2}:){5}([0-9A-F]{2}))} $expect_out(buffer) -> address}
+		timeout {abort; exit 1}
+	}
 
-   send "scan off\r";    # stop discovery
-   expect $prompt
+	send "scan off\r";    # stop discovery
+	expect $prompt
 }
 
 
 send "pair $address\r"
 set timeout 10
 expect {
-   "Pairing successful" {}
-   "*Confirm passkey*\(yes\/no\):" {set passkey "confirm" }
-   "*Enter PIN code:"  {set passkey "pin" }
-   timeout {abort; exit 1}
+	"Pairing successful" {}
+	"*Confirm passkey*\(yes\/no\):" {set passkey "confirm" }
+	"*Enter PIN code:"  {set passkey "pin" }
+	timeout {abort; exit 1}
 }
 
 if { "$passkey" != "nil" } {
-   set timeout 15;     # give time for authenticated pairings
-   if { "$passkey" == "confirm" } { send "yes\r" }
-   if { "$passkey" == "pin" } { send "0000\r" }
-   expect {
-      "Pairing successful" {}
-      timeout {abort; exit 1}
-   }
+	set timeout 15;     # give time for authenticated pairings
+	if { "$passkey" == "confirm" } { send "yes\r" }
+	if { "$passkey" == "pin" } { send "0000\r" }
+	expect {
+		"Pairing successful" {}
+		timeout {abort; exit 1}
+	}
 }
 expect $prompt
 
@@ -86,3 +86,4 @@ expect eof
 
 puts "$address"
 exit 0
+

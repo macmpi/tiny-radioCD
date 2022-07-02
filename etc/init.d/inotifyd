@@ -14,6 +14,6 @@ command_background=yes
 start_stop_daemon_args="--stdout /var/log/$RC_SVCNAME/${RC_SVCNAME}.log --stderr /var/log/$RC_SVCNAME/${RC_SVCNAME}.log"
 
 start_pre() {
-        checkpath --directory --owner $INOTIFYD_USER --mode 0775 \
-                /var/log/$RC_SVCNAME
+	checkpath --directory --owner $INOTIFYD_USER --mode 0775 \
+	/var/log/$RC_SVCNAME
 }

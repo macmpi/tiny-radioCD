@@ -32,7 +32,6 @@ ln -sfn brcmfmac43430-sdio.raspberrypi,3-model-b.txt \
 /lib/firmware/brcm/brcmfmac43430-sdio.raspberrypi,model-zero-w.txt
 
 
-
 #################################
 # Modify SD content: easy-setup and boot options
 mount -o remount,rw /dev/mmcblk0p1 /media/mmcblk0p1
@@ -77,10 +76,7 @@ echo "config_hdmi_boost=11" >> /media/mmcblk0p1/usercfg.txt
 # External activity LED on GPIO 21
 #dtparam=act_led_gpio=21
 
-
 mount -o remount,ro /dev/mmcblk0p1 /media/mmcblk0p1
-
-
 
 
 #################################
@@ -90,8 +86,8 @@ if !(grep -q "root=" /proc/cmdline); then  #we are not in sys mode (so data or d
 	# stuff of matter for diskless or data mode
 		
 	if !(grep -q "/var" /etc/fstab); then #we are not in data mode: hence diskless only
-	    # stuff from /var for diskless mode
-	    :
+		# stuff from /var for diskless mode
+		:
 	fi
 fi
 
