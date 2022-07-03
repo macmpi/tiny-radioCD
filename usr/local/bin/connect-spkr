@@ -13,7 +13,7 @@ ID="$( bluetoothctl paired-devices | grep "$MAC" )"
 if bluetoothctl connect "$MAC" > /dev/null 2>&1; then
 	logger -st ${0##*/} "Connected to ${ID/Device $MAC /}"
 else
-	logger -st ${0##*/} "Failed to connected to ${ID/Device $MAC /}"
+	logger -st ${0##*/} "Failed to connect to ${ID/Device $MAC /}"
 	switch-spkr
 fi
 
