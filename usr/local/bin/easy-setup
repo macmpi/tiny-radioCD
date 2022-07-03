@@ -85,10 +85,10 @@ fi
 if [ -e /sys/class/bluetooth/hci0 ] && [ -n "${Speaker// /}${Remote// /}" ]; then
 	# if they are MAC addresses, make them CAPITALS
 	echo "$Speaker" | grep -q "[[:xdigit:]:]\{17\}" && \
-	Speaker="$( printf "$Speaker" | grep -o "[[:xdigit:]:]\{17\}" | tr a-z A-Z )"
+	Speaker="$( echo "$Speaker" | grep -o "[[:xdigit:]:]\{17\}" | tr a-z A-Z )"
 
 	echo "$Remote" | grep -q "[[:xdigit:]:]\{17\}" && \
-	Remote="$( printf "$Remote" | grep -o "[[:xdigit:]:]\{17\}" | tr a-z A-Z )"
+	Remote="$( echo "$Remote" | grep -o "[[:xdigit:]:]\{17\}" | tr a-z A-Z )"
 
 	logger -st ${0##*/} "Trying to pair new devices: $Speaker $Remote"
 
