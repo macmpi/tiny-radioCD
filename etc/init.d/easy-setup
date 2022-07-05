@@ -7,6 +7,8 @@
 description="Setup BT and Wifi settings for tiny-radioCD"
 
 depend() {
+	after localmount
+	use logger
 	use bluealsa
 	before sshd
 	before dropbear
