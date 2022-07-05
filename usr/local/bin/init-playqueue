@@ -41,7 +41,7 @@ i=1
 while IFS='' read -r TIME && [ -n "$TIME" ]; do
 	printf "#EXTINF:$TIME,CD - $G_TRACK $i\n" >> /tmp/CD.m3u
 	printf "cdda:///$i\n\n" >> /tmp/CD.m3u
-	i=`expr $i + 1`
+	i=$((i+1))
 done <<EOF
 $LIST
 EOF
