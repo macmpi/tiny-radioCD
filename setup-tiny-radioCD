@@ -38,7 +38,7 @@ install -m644 "$srcdir"/etc/apk/repositories /etc/apk/repositories
 apk -U upgrade
 
 apk add wpa_supplicant udev cdparanoia mpc avahi expect \
-mpd bluez-alsa 2>&1 \
+mpd bluez-alsa bluez-alsa-utils 2>&1 \
 || { echo >&2 "Base packages install failed, exiting! (for clues: apk -s fix)"; exit 1; }
 
 
