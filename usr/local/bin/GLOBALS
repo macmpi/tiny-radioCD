@@ -1,6 +1,9 @@
 # Part of tiny-radioCD project, originally designed & hand-crafted by macmpi
 # check License at project home https://github.com/macmpi/tiny-radioCD
 
+# Delay in seconds to wait before paired speaker is disconnected if not default
+G_DELAY_SPKR=10
+
 # Delay in second for quick PLAY-PAUSE and NEXT or PREVIOUS transitions
 G_DELAY="0.8"
 
