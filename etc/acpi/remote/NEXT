@@ -14,7 +14,7 @@ TEST="0"
 [ -s /tmp/.STAMP ] && PLAY="$(cat /tmp/.STAMP)"
 
 . GLOBALS # needs full path so sh-l in shebang!
-[ "$CUR" != "$PLAY" ] && TEST="$( echo "$CUR - $PLAY < $G_DELAY" | bc )"
+[ "$CUR" != "$PLAY" ] && TEST="$( echo "$CUR - $PLAY < $G_DELAY_KEYS" | bc )"
 
 if [ "$TEST" -eq "1" ]; then
 	/etc/acpi/remote/EJECT

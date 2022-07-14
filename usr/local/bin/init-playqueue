@@ -26,7 +26,7 @@ printf "RADIO" > /tmp/.SOURCE; mpc -q play; exit; }
 printf "RADIO" > /tmp/.SOURCE; mpc -q play; exit; }
 
 # Extract Audio CD tracks duration list in seconds
-LIST="$( cdparanoia -sQ -S"$G_CDSPEED" 2>&1 | grep '^\s*[0-9]*\.' | \
+LIST="$( cdparanoia -sQ -S"$G_CD_SPEED" 2>&1 | grep '^\s*[0-9]*\.' | \
 awk '{print $3}' | sed 's/[][]//g' | \
 awk -F: '{ printf "%.0f\n", ($1 * 60) + $2 }' )"
 

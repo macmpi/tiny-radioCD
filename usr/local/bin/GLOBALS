@@ -5,10 +5,11 @@
 G_DELAY_SPKR=10
 
 # Delay in second for quick PLAY-PAUSE and NEXT or PREVIOUS transitions
-G_DELAY="0.8"
+G_DELAY_KEYS="0.8"
 
 # Set CD read speed: 8 is 8x (tradeoff between drive noise and playback quality)
-G_CDSPEED="8" 
+G_CD_SPEED=8
 
 # Name for tracks in CD playlist: Localizations!!...
-G_TRACK="Track" 
+G_TRACK="Track"
+

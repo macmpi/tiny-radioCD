@@ -17,7 +17,7 @@ TEST="0"
 printf "$CUR" > /tmp/.STAMP
 
 . GLOBALS # needs full path so sh-l in shebang!
-[ "$CUR" != "$OLD" ] && TEST="$( echo "$CUR - $OLD < $G_DELAY" | bc )"
+[ "$CUR" != "$OLD" ] && TEST="$( echo "$CUR - $OLD < $G_DELAY_KEYS" | bc )"
 
 [ "$TEST" -eq "1" ] && /etc/acpi/remote/SWITCH_SPKR
 mpc -q toggle
