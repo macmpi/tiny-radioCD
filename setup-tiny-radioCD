@@ -197,7 +197,7 @@ rc-update add avahi-daemon default 2>&1
 ###############################
 # addons-section: trigger here any specific install script to be included
 grep -q "Raspberry Pi" /proc/cpuinfo && . "$srcdir"/addons/pi
-
+arch=$(uname -m); [ ${arch%_64} = "x86" ] && . "$srcdir"/addons/x86
 
 ###############################
 # Preserve local specific stuff according to install modes

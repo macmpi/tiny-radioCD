@@ -1,0 +1,43 @@
+#!/bin/sh
+
+# Part of tiny-radioCD project, originally designed & hand-crafted by macmpi
+# check License at project home https://github.com/macmpi/tiny-radioCD
+
+
+# Note: this file is included so all upper variables work
+# do NOT change directory inside here, or cd "$srcdir" at the end!...
+
+
+# Limited x86-specific customizations
+
+echo "Installing x86 specific tweaks"
+
+# adding nomodeset to boot option in grub
+# some old NVIDIA GPUs have driver issues that collide once eudev is set
+# https://gitlab.alpinelinux.org/alpine/aports/-/issues/14010
+FILE="$(find /boot /media -type f -name grub.cfg 2>/dev/null | head -1)"
+if ! grep -q nomodeset "$FILE"; then
+	MOUNTPOINT="$(df "$FILE" | awk '{ print $6 }' | tail -1)"
+#	MOUNTPOINT="$(findmnt -no TARGET --target "$FILE")"
+	[ ! -w "$FILE" ]; RO=$?
+	[ $RO -eq "0" ] && mount -o remount,rw "$MOUNTPOINT"
+	sed -i 's/ quiet/ nomodeset quiet/' "$FILE"
+	sync
+	[ $RO -eq "0" ] && mount -o remount,ro "$MOUNTPOINT"
+fi
+
+
+#################################
+# Preserve local specific stuff according to install modes
+
+if !(grep -q "root=" /proc/cmdline); then  #we are not in sys mode (so data or diskless)
+	# stuff of matter for diskless or data mode
+		
+	if !(grep -q "/var" /etc/fstab); then #we are not in data mode: hence diskless only
+		# stuff from /var for diskless mode
+		:
+	fi
+fi
+
+
+echo "Done with x86 specific tweaks"
