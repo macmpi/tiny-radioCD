@@ -17,6 +17,7 @@ echo "Installing x86 specific tweaks"
 # https://gitlab.alpinelinux.org/alpine/aports/-/issues/14010
 FILE="$(find /boot /media -type f -name grub.cfg 2>/dev/null | head -1)"
 if ! grep -q nomodeset "$FILE"; then
+	echo "Setting nomodeset boot option in grub"
 	MOUNTPOINT="$(df "$FILE" | awk '{ print $6 }' | tail -1)"
 #	MOUNTPOINT="$(findmnt -no TARGET --target "$FILE")"
 	[ ! -w "$FILE" ]; RO=$?
