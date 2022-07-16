@@ -166,9 +166,9 @@ rc-update add mpd default 2>&1
 
 service inotifyd stop 2>&1 # just in case running the script runs to update an existing install
 service mpd start 2>&1
-while ! ( mpc > /dev/null 2>&1 ); do sleep 0.5 ; done  # let MPD settle
-mpc rescan 2>&1  # update mpd database: safe for --Menu-- as inotifyd/incrond is not running
-mpc update 2>&1
+while ! ( mpc -q > /dev/null 2>&1 ); do sleep 0.5 ; done  # let MPD settle
+mpc -q rescan	# update mpd database: safe for --Menu-- as inotifyd/incrond is not running
+mpc -q update
 
 
 ###############################
