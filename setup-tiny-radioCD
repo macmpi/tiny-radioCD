@@ -38,7 +38,7 @@ install -m644 "$srcdir"/etc/apk/repositories /etc/apk/repositories
 apk -U upgrade
 
 apk add wpa_supplicant udev cdparanoia mpc avahi expect \
-mpd bluez-alsa bluez-alsa-utils 2>&1 \
+mpd bluez-alsa bluez-alsa-utils alsa-utils 2>&1 \
 || { echo >&2 "Base packages install failed, exiting! (for clues: apk -s fix)"; exit 1; }
 
 
@@ -154,6 +154,10 @@ sed -i -e 's/^BLUEALSA_CONF=\"/BLUEALSA_CONF=\"-p a2dp-source /' \
 rc-update add bluealsa default 2>&1
 service bluealsa start 2>&1   # just for use to eventually pair after install
 
+
+###############################
+# ALSA setup
+amixer set Master playback 100% unmute
 
 ###############################
 # MPD setup
