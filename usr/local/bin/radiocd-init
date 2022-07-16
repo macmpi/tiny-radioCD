@@ -3,8 +3,9 @@
 # Part of tiny-radioCD project, originally designed & hand-crafted by macmpi
 # check License at project home https://github.com/macmpi/tiny-radioCD
 
+amixer set Master playback 100% unmute > /dev/null	# set ALSA full scale
 
-while ! ( mpc -q > /dev/null 2>&1 ); do sleep 0.5 ; done    # let MPD settle
+while ! ( mpc -q > /dev/null 2>&1 ); do sleep 0.5 ; done	# let MPD settle
 mpc -q update		# rescan would access --Menu-- files
 mpc -q repeat on	# set repeat mode to loop playlists
 mpc -q vol 100		# volume at 100%
