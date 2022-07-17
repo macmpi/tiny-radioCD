@@ -21,9 +21,9 @@ This personal project is geared towards simple & essential use-cases for casual 
 Typically runs in 50MB of RAM on a low-cost PiZero device (135 MB rootf suitable for RAM-only operation).\
 Check-out our minimalistic USB-powered [PiZeroWed-Mac mini](https://github.com/macmpi/tiny-radioCD/wiki/PiZeroWed-Mac-mini)!
 
-Though mostly tested on Pi, it would run on any AlpineLinux supported platform (diskless/data/sys modes).\
+Though mostly tested on Pi & x86/64, it would run on any AlpineLinux supported platform (diskless/data/sys modes).\
 Some ready-to-use images are available (Raspberry Pi armhf ram-only SD archive for instance).\
-Customized installs can be included as simple addon-scripts (refer to available Pi example).
+Customized setup can be included as simple addon-scripts (refer to available Pi example).
 
 
 
@@ -53,15 +53,15 @@ cd /tmp
 wget -O tiny-radioCD.zip https://github.com/macmpi/tiny-radioCD/archive/master.zip
 unzip -oq tiny-radioCD.zip
 cd tiny-radioCD
-chmod +x setup-tiny-radioCD
-sudo ./setup-tiny-radioCD
+chmod +x install
+sudo ./install
 ```
 
 After install, bluetooth speaker pairing (and eventual remote command pairing) may be done under console or ssh (alternatively, check *[easy-setup](https://github.com/macmpi/tiny-radioCD/wiki)* section in Wiki):\
 `>bluetoothctl`     After a <u>scan</u>, make sure you <u>pair</u>, <u>connect</u> and <u>trust</u> your bluetooth devices.\
 Take note of your speaker MAC address `XX:XX:XX:XX:XX:XX`\
 Then finish speaker setup with the below command:\
-`>set-speaker "XX:XX:XX:XX:XX:XX"`\
+`>set-speaker "XX:XX:XX:XX:XX:XX"`
 
 Reboot to take advantage of your new **tiny-radioCD**!
 
@@ -74,8 +74,13 @@ Reboot to take advantage of your new **tiny-radioCD**!
 - Update to Alpine 3.16
 - replace sudo by doas
 - use busybox inotifyd instead of incrond
+- improve Bluetooth devices detection (requires bluealsa-cli & Bluez >= 5.xx)
+- improve CD handling (udev rule & helper)
+- add volume & mute keys support
+- easy-setup available on all platforms
 - various fixes (HDMI, services dependencies,TSF stream,...)
 - Pi: enable Bluetooth via overlays
+- x86: nomodeset
 
 0.5: (May 17th 2020)
 - initial release, Alpine 3.11
@@ -89,5 +94,5 @@ Contributions are welcome in `dev` branch.
 
 
 
-<u>Side note:</u> several very generic & complete packages exist, with extensive feature-set & remote Web UI service (special credits to [Volumio2](https://volumio.org/)): great stuff too, different use-cases focus.
+*Side note:* many other solutions exist, with more extensive feature-set & remote Web UI service (special credits to [Volumio2](https://volumio.org/)): great stuff too, different use-cases focus.
 

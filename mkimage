@@ -10,8 +10,8 @@
 
 
 ########## Install tiny-radioCD
-chmod +x setup-tiny-radioCD
-./setup-tiny-radioCD
+chmod +x install
+./install
 
 
 ########## do some clean-up
