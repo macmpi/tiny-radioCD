@@ -20,7 +20,7 @@ if ! grep -q nomodeset "$FILE"; then
 	echo "Setting nomodeset boot option in grub"
 	MOUNTPOINT="$(df "$FILE" | awk '{ print $6 }' | tail -1)"
 #	MOUNTPOINT="$(findmnt -no TARGET --target "$FILE")"
-	[ ! -w "$FILE" ]; RO=$?
+	! touch "$FILE" > /dev/null 2>&1; RO=$?
 	[ $RO -eq "0" ] && mount -o remount,rw "$MOUNTPOINT"
 	sed -i 's/ quiet/ nomodeset quiet/' "$FILE"
 	sync
