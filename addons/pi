@@ -12,9 +12,17 @@
 
 echo "Installing Pi specific tweaks"
 
+# Improve Entropy generation for wifi
 apk -u add rng-tools --update-cache \
 || { echo >&2 "Install failed, exiting! (for clues: apk -s fix)"; exit 1; }
 
+# Pi devices have hwrng and jitter may take significant CPU bandwidth
+# to init, so just rely on hwrng which provides enough entropy alone
+# see https://gitlab.alpinelinux.org/alpine/aports/-/issues/13035#note_213846
+if ! grep -q 'EXCLUDE_ENTROPY_SOURCES=\".*jitter' /etc/conf.d/rngd; then
+	echo "Excluding jitter entropy source from rngd conf.d file"
+	sed -i 's/^EXCLUDE_ENTROPY_SOURCES=\"/EXCLUDE_ENTROPY_SOURCES=\"jitter /' /etc/conf.d/rngd
+fi
 rc-update add rngd boot 2>&1 # same as wpa_supplicant for providing entropy
 
 
