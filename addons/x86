@@ -12,20 +12,29 @@
 
 echo "Installing x86 specific tweaks"
 
-# adding nomodeset to boot option in grub
+# adding nomodeset to boot option in grub.cfg & syslinux.cfg
 # some old NVIDIA GPUs have driver issues that collide once eudev is set
 # https://gitlab.alpinelinux.org/alpine/aports/-/issues/14010
 FILE="$(find /boot /media -type f -name grub.cfg 2>/dev/null | head -1)"
 if ! grep -q nomodeset "$FILE"; then
-	echo "Setting nomodeset boot option in grub"
+	echo "Setting nomodeset boot option in grub & syslinux.cfg"
 	MOUNTPOINT="$(df "$FILE" | awk '{ print $6 }' | tail -1)"
-#	MOUNTPOINT="$(findmnt -no TARGET --target "$FILE")"
 	! touch "$FILE" > /dev/null 2>&1; RO=$?
 	[ $RO -eq "0" ] && mount -o remount,rw "$MOUNTPOINT"
 	sed -i 's/ quiet/ nomodeset quiet/' "$FILE"
+	sed -i 's/ quiet/ nomodeset quiet/' "${FILE%/*/*}/syslinux/syslinux.cfg"
 	sync
 	[ $RO -eq "0" ] && mount -o remount,ro "$MOUNTPOINT"
 fi
+
+echo "*** WARNING!! Machine may not boot if missing GPU firmware ***"
+# NOTE: in addition some GPU card firmware drivers may be necessary.
+# For instance for older Macs (i.e nvidia 9400M) linux-firmware-nvidia must
+# be installed in addition (not part of default firmware modloop).
+# As /lib/firmware is not writeable on diskless/data modes, a ext4
+# persistent storage needs to be added and overlayed
+# (other partition or persist .img file), hence /etc/fstab adjusted accordingly
+# i.e. https://wiki.alpinelinux.org/wiki/Raspberry_Pi#Persistent_stotage
 
 
 #################################
