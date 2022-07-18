@@ -225,22 +225,26 @@ if !(grep -q "root=" /proc/cmdline); then  #we are not in sys mode (so data or d
 			lbu include /var/lib/bluetooth
 	fi
 	
-	# Enable easy-setup on storage and add default config file sample
-	. /etc/lbu/lbu.conf
-	grep -q "/media/$LBU_MEDIA.*[[:space:]]ro[[:space:],]" /proc/mounts; RO=$?
-	[ "$RO" -eq "0" ] && mount -o remount,rw /media/$LBU_MEDIA
-	mkdir -p /media/$LBU_MEDIA/_tiny-radioCD
-	ln -sfn /media/$LBU_MEDIA/_tiny-radioCD /etc/tiny-radioCD
-	install -m644 "$srcdir"/tiny-radioCD.conf /etc/tiny-radioCD/tiny-radioCD.conf
-	sync
-	[ "$RO" -eq "0" ] && mount -o remount,ro /media/$LBU_MEDIA
-
+	if ! [ -f /etc/tiny-radioCD/tiny-radioCD.conf ]; then
+		# Enable easy-setup on storage and add default config file sample
+		. /etc/lbu/lbu.conf
+		grep -q "/media/$LBU_MEDIA.*[[:space:]]ro[[:space:],]" /proc/mounts; RO=$?
+		[ "$RO" -eq "0" ] && mount -o remount,rw /media/$LBU_MEDIA
+		mkdir -p /media/$LBU_MEDIA/_tiny-radioCD
+		ln -sfn /media/$LBU_MEDIA/_tiny-radioCD /etc/tiny-radioCD
+		install -m644 "$srcdir"/tiny-radioCD.conf /etc/tiny-radioCD/tiny-radioCD.conf
+		sync
+		[ "$RO" -eq "0" ] && mount -o remount,ro /media/$LBU_MEDIA
+	fi
+	
 	lbu commit -d
 	
 else
-	# Enable easy-setup on root volume  and add default config file sample
-	install -dm755 /etc/tiny-radioCD
-	install -m644 "$srcdir"/tiny-radioCD.conf /etc/tiny-radioCD/tiny-radioCD.conf
+	if ! [ -f /etc/tiny-radioCD/tiny-radioCD.conf ]; then
+		# Enable easy-setup on root volume  and add default config file sample
+		install -dm755 /etc/tiny-radioCD
+		install -m644 "$srcdir"/tiny-radioCD.conf /etc/tiny-radioCD/tiny-radioCD.conf
+	fi
 fi
 
 ###############################
