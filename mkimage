@@ -15,10 +15,8 @@ chmod +x install
 
 
 ########## do some clean-up
-/sbin/setup-hostname tiny-radiocd
-
-rm -f /etc/wpa_supplicant/wpa_supplicant.conf
-rm -rf /var/lib/bluetooth/*
+echo "tiny-radiocd" > /etc/hostname
+hostname -F /etc/hostname
 
 rc-update del sshd default
 apk del openssh
@@ -35,21 +33,22 @@ rm -f /etc/dropbear/dropbear_*_host_key
 # Optionally lock-out root and no admin if non-empty parameter
 if [ -z "$1" ]; then
 
-    # create admin:wheel user with tiny-radioCD pass
-    chmod +x create-user
-    ./create-user admin wheel tiny-radioCD   # homedir /tmp
-    
-    # allow doas for wheel group
-    apk add doas
-    grep -q "permit persist :wheel" /etc/doas.d/doas.conf || \
-echo "permit persist :wheel" >> /etc/doas.d/doas.conf
+	# create admin:wheel user with tiny-radioCD pass
+	chmod +x create-user
+	./create-user admin wheel tiny-radioCD   # homedir /tmp
+
+	# allow doas for wheel group
+	apk add doas
+	grep -q "permit persist :wheel" /etc/doas.d/doas.conf || \
+	echo "permit persist :wheel" >> /etc/doas.d/doas.conf
 
 
-    # enable dropbear ssh
-    apk add dropbear
-    rc-update add dropbear default
-    
-    passwd -d root  # expiring it would require shadow package
+	# enable dropbear ssh
+	apk add dropbear
+	rc-update add dropbear default
+	grep -q "root=" /proc/cmdline || touch /etc/tiny-radiocd_ssh_nokeys
+
+	passwd -d root  # expiring it would require shadow package
 
 else
 
@@ -63,7 +62,10 @@ else
 
 fi
 
+rm -f /etc/network/interfaces
+rm -f /etc/wpa_supplicant/wpa_supplicant.conf
+rm -f /etc/resolv.conf
+rm -rf /var/lib/bluetooth/*
 
-grep -q "root=" /proc/cmdline || \
-{ touch /etc/tiny-radiocd_ssh_nokeys; lbu commit -d; }
+grep -q "root=" /proc/cmdline || lbu commit -d
 
