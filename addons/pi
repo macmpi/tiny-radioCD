@@ -42,7 +42,7 @@ ln -sfn brcmfmac43430-sdio.raspberrypi,3-model-b.txt \
 
 #################################
 # Modify SD content: easy-setup and boot options
-mount -o remount,rw /dev/mmcblk0p1 /media/mmcblk0p1
+mount -o remount,rw /media/mmcblk0p1
 
 # Pi eventual supplements for config.txt or usrcfg.txt
 
@@ -84,7 +84,7 @@ echo "config_hdmi_boost=11" >> /media/mmcblk0p1/usercfg.txt
 # External activity LED on GPIO 21
 #dtparam=act_led_gpio=21
 
-mount -o remount,ro /dev/mmcblk0p1 /media/mmcblk0p1
+mount -o remount,ro /media/mmcblk0p1
 
 
 #################################
