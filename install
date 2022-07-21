@@ -61,7 +61,7 @@ rc-update add wpa_supplicant boot 2>&1
 install -m644 "$srcdir"/etc/motd /etc/motd
 sed -i '$ s/.$/v'"$version"' by macmpi\n\n/' /etc/motd
 
-/sbin/setup-udev -n   # do not start service right now
+setup-devd -C udev	# do not start service right now
 
 
 ###############################
