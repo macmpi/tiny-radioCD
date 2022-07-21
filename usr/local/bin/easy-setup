@@ -30,8 +30,7 @@ if [ -e /sys/class/net/wlan0 ] && [ -n "${SSID// /}" ]; then
 	logger -st ${0##*/} "Setting $SSID wifi network..."
 	# Take care of network interfaces: add wlanO if not available
 	if ! cat /etc/network/interfaces | grep -q "wlan0"; then
-		echo "auto wlan0" >> /etc/network/interfaces
-		echo "iface wlan0 inet dhcp" >> /etc/network/interfaces
+		printf "auto wlan0\niface wlan0 inet dhcp\n" >> /etc/network/interfaces
 		TOUCHED=true
 	fi
 
@@ -58,6 +57,7 @@ if [ -e /sys/class/net/wlan0 ] && [ -n "${SSID// /}" ]; then
 
 	case "$CONFIG" in
 		*"$NEW"*)	# config already exists, do nothing
+			logger -st ${0##*/} "$SSID was already set: not touching"
 		;;
 
 		*)			# add new config first
@@ -65,6 +65,7 @@ if [ -e /sys/class/net/wlan0 ] && [ -n "${SSID// /}" ]; then
 			printf "$NEW\n\n" >> /tmp/wpa_supplicant.conf
 			printf "$CONFIG\n" >> /tmp/wpa_supplicant.conf
 			mv /tmp/wpa_supplicant.conf /etc/wpa_supplicant/wpa_supplicant.conf
+			logger -st ${0##*/} "$SSID added."
 			TOUCHED=true
 		;;
 	esac
