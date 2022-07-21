@@ -62,7 +62,12 @@ else
 
 fi
 
-rm -f /etc/network/interfaces
+cat <<-EOF > /etc/network/interfaces
+	auto lo
+	iface lo inet loopback
+
+	EOF
+
 rm -f /etc/wpa_supplicant/wpa_supplicant.conf
 rm -f /etc/resolv.conf
 rm -rf /var/lib/bluetooth/*
