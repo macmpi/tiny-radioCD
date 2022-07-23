@@ -15,7 +15,7 @@ echo "Installing x86 specific tweaks"
 # adding nomodeset to boot option in grub.cfg & syslinux.cfg
 # some old NVIDIA GPUs have driver issues that collide once eudev is set
 # https://gitlab.alpinelinux.org/alpine/aports/-/issues/14010
-FILE="$(find /boot /media -type f -name grub.cfg 2>/dev/null | head -1)"
+FILE="$(find /boot /media -type d -path '*/.*' -prune -o -type f -name grub.cfg 2>/dev/null | head -1)"
 if ! grep -q nomodeset "$FILE"; then
 	echo "Setting nomodeset boot option in grub & syslinux.cfg"
 	MOUNTPOINT="$(df "$FILE" | awk '{ print $6 }' | tail -1)"
