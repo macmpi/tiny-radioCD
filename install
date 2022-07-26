@@ -99,8 +99,8 @@ rc-update add monitor-spkr default 2>&1
 install -m755 "$srcdir"/usr/local/bin/init-playqueue /usr/local/bin/init-playqueue
 install -m755 "$srcdir"/usr/local/bin/init-playqueue_helper /usr/local/bin/init-playqueue_helper
 install -m755 "$srcdir"/usr/local/bin/btdevmngr /usr/local/bin/btdevmngr
-install -m755 "$srcdir"/usr/local/bin/radiocd-cmd /usr/local/bin/radiocd-cmd
-install -m755 "$srcdir"/usr/local/bin/radiocd-cmd_helper /usr/local/bin/radiocd-cmd_helper
+install -m755 "$srcdir"/usr/local/bin/menu-cmd /usr/local/bin/menu-cmd
+install -m755 "$srcdir"/usr/local/bin/menu-cmd_helper /usr/local/bin/menu-cmd_helper
 install -m755 "$srcdir"/usr/local/bin/set-speaker /usr/local/bin/set-speaker
 install -m755 "$srcdir"/usr/local/bin/update /usr/local/bin/update
 install -m755 "$srcdir"/usr/local/bin/pair-device /usr/local/bin/pair-device
@@ -168,12 +168,12 @@ adduser mpd cdrom
 grep -q "permit persist mpd" /etc/doas.d/doas.conf || \
 cat <<-EOF >> /etc/doas.d/doas.conf
 	permit persist mpd as root
-	permit nopass mpd as root cmd /usr/local/bin/radiocd-cmd args poweroff
-	permit nopass mpd as root cmd /usr/local/bin/radiocd-cmd args reboot
-	permit nopass mpd as root cmd /usr/local/bin/radiocd-cmd args eject
-	permit nopass mpd as root cmd /usr/local/bin/radiocd-cmd args switch-spkr
-	permit nopass mpd as root cmd /usr/local/bin/radiocd-cmd args connect-spkr
-	permit nopass mpd as root cmd /usr/local/bin/radiocd-cmd args update
+	permit nopass mpd as root cmd /usr/local/bin/menu-cmd args poweroff
+	permit nopass mpd as root cmd /usr/local/bin/menu-cmd args reboot
+	permit nopass mpd as root cmd /usr/local/bin/menu-cmd args eject
+	permit nopass mpd as root cmd /usr/local/bin/menu-cmd args switch-spkr
+	permit nopass mpd as root cmd /usr/local/bin/menu-cmd args connect-spkr
+	permit nopass mpd as root cmd /usr/local/bin/menu-cmd args update
 	EOF
 
 install -m644 "$srcdir"/etc/mpd.conf /etc/mpd.conf

@@ -45,5 +45,5 @@ cd tiny-radioCD*
 chmod +x install
 ./install > /tmp/update.log 2>&1
 
-radiocd-cmd reboot
+menu-cmd reboot
 

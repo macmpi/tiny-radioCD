@@ -4,5 +4,5 @@
 # check License at project home https://github.com/macmpi/tiny-radioCD
 
 
-radiocd-cmd eject
+menu-cmd eject
 

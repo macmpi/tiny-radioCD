@@ -3,5 +3,5 @@
 # check License at project home https://github.com/macmpi/tiny-radioCD
 
 
-INOTIFYD_ARGS="/usr/local/bin/radiocd-cmd_helper /var/lib/mpd/music/--Menu--:a"
+INOTIFYD_ARGS="/usr/local/bin/menu-cmd_helper /var/lib/mpd/music/--Menu--:a"
 INOTIFYD_USER=mpd
