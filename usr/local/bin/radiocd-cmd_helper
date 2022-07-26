@@ -5,5 +5,5 @@
 
 # inotify provides filename (.mp3) that has been read as third parameter
 
-radiocd-cmd "${3%.*}"
+doas -n /usr/local/bin/radiocd-cmd "${3%.*}"
 

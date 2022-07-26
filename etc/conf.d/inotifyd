@@ -4,4 +4,4 @@
 
 
 INOTIFYD_ARGS="/usr/local/bin/radiocd-cmd_helper /var/lib/mpd/music/--Menu--:a"
-INOTIFYD_USER=root
+INOTIFYD_USER=mpd

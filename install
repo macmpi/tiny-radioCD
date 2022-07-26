@@ -37,7 +37,7 @@ install -m644 "$srcdir"/etc/apk/repositories /etc/apk/repositories
 
 apk -U upgrade
 
-apk add wpa_supplicant udev cdparanoia mpc avahi expect \
+apk add doas wpa_supplicant udev cdparanoia mpc avahi expect \
 mpd bluez-alsa bluez-alsa-utils alsa-utils 2>&1 \
 || { echo >&2 "Base packages install failed, exiting! (for clues: apk -s fix)"; exit 1; }
 
@@ -164,6 +164,17 @@ amixer set Master playback 100% unmute
 
 # mpd install package creates mpd user and directories, mpd already audio member
 adduser mpd cdrom
+
+grep -q "permit persist mpd" /etc/doas.d/doas.conf || \
+cat <<-EOF >> /etc/doas.d/doas.conf
+	permit persist mpd as root
+	permit nopass mpd as root cmd /usr/local/bin/radiocd-cmd args poweroff
+	permit nopass mpd as root cmd /usr/local/bin/radiocd-cmd args reboot
+	permit nopass mpd as root cmd /usr/local/bin/radiocd-cmd args eject
+	permit nopass mpd as root cmd /usr/local/bin/radiocd-cmd args switch-spkr
+	permit nopass mpd as root cmd /usr/local/bin/radiocd-cmd args connect-spkr
+	permit nopass mpd as root cmd /usr/local/bin/radiocd-cmd args update
+	EOF
 
 install -m644 "$srcdir"/etc/mpd.conf /etc/mpd.conf
 rc-update add mpd default 2>&1

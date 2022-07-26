@@ -38,7 +38,6 @@ if [ -z "$1" ]; then
 	./create-user admin wheel tiny-radioCD   # homedir /tmp
 
 	# allow doas for wheel group
-	apk add doas
 	grep -q "permit persist :wheel" /etc/doas.d/doas.conf || \
 	echo "permit persist :wheel" >> /etc/doas.d/doas.conf
 
