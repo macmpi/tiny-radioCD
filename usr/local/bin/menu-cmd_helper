@@ -5,5 +5,5 @@
 
 # inotify provides filename (.mp3) that has been read as third parameter
 
-doas -n /usr/local/bin/menu-cmd "${3%.*}"
+doas -n menu-cmd "${3%.*}"
 

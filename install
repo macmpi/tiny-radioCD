@@ -165,15 +165,14 @@ amixer set Master playback 100% unmute
 # mpd install package creates mpd user and directories, mpd already audio member
 adduser mpd cdrom
 
-grep -q "permit persist mpd" /etc/doas.d/doas.conf || \
+grep -q "permit nopass mpd" /etc/doas.d/doas.conf || \
 cat <<-EOF >> /etc/doas.d/doas.conf
-	permit persist mpd as root
-	permit nopass mpd as root cmd /usr/local/bin/menu-cmd args poweroff
-	permit nopass mpd as root cmd /usr/local/bin/menu-cmd args reboot
-	permit nopass mpd as root cmd /usr/local/bin/menu-cmd args eject
-	permit nopass mpd as root cmd /usr/local/bin/menu-cmd args switch-spkr
-	permit nopass mpd as root cmd /usr/local/bin/menu-cmd args connect-spkr
-	permit nopass mpd as root cmd /usr/local/bin/menu-cmd args update
+	permit nopass mpd as root cmd menu-cmd args poweroff
+	permit nopass mpd as root cmd menu-cmd args reboot
+	permit nopass mpd as root cmd menu-cmd args eject
+	permit nopass mpd as root cmd menu-cmd args switch-spkr
+	permit nopass mpd as root cmd menu-cmd args connect-spkr
+	permit nopass mpd as root cmd menu-cmd args update
 	EOF
 
 install -m644 "$srcdir"/etc/mpd.conf /etc/mpd.conf
