@@ -37,5 +37,8 @@ case "$1" in
 	"update")
 		update
 	;;
+	*)
+		logger -st ${0##*/} "Bad command: $1" && exit 1
+	;;
 esac
 
