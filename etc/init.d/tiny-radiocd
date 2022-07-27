@@ -8,10 +8,10 @@ description="tiny-radioCD startup"
 
 depend() {
 	use logger
-	use mpd
-	use bluealsa
-	use monitor-spkr
-	use inotifyd
+	after mpd
+	after bluealsa
+	after monitor-spkr
+	after inotifyd
 }
 
 start()
