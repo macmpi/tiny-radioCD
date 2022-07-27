@@ -10,8 +10,8 @@ depend() {
 	after localmount
 	use logger
 	use bluealsa
-	use sshd
-	use dropbear
+	after sshd
+	after dropbear
 	before inotifyd
 	before mpd
 	before acpid
