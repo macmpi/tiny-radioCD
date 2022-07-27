@@ -74,7 +74,7 @@ Reboot to take advantage of your new **tiny-radioCD**!
 - Update to Alpine 3.16
 - replace sudo by doas
 - use busybox inotifyd instead of incrond
-- improve Bluetooth devices detection (requires bluealsa-cli & Bluez >= 5.xx)
+- improve Bluetooth devices detection (requires bluealsa-cli & Bluez >= 5.65)
 - improve CD handling (udev rule & helper)
 - add volume & mute keys support
 - easy-setup available on all platforms

@@ -8,7 +8,7 @@
 MAC="$( grep "defaults.bluealsa.device " /etc/alsa/conf.d/20-bluealsa.conf | \
 	grep -o "[[:xdigit:]:]\{17\}" 2> /dev/null )"
 
-ID="$( bluetoothctl paired-devices | grep "$MAC" )"
+ID="$( bluetoothctl devices Paired | grep "$MAC" )"
 
 if bluetoothctl connect "$MAC" > /dev/null 2>&1; then
 	logger -st ${0##*/} "Connected to ${ID/Device $MAC /}"

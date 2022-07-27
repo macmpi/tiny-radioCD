@@ -32,7 +32,7 @@ while read -r LINE; do
 	if ! [ -f /tmp/.SW_SPKR ]; then
 		MAC="$( echo "$LINE" | grep "PCMAdded" | grep -o "[[:xdigit:]_]\{18\}" | sed 's/_/:/g' | cut -c2- )"
 		if [ -n "$MAC" ]; then
-			ID="$( bluetoothctl paired-devices | grep "$MAC" )"
+			ID="$( bluetoothctl devices Paired | grep "$MAC" )"
 			if ( grep -q "$MAC" /etc/alsa/conf.d/20-bluealsa.conf ) ;then
 				logger -t ${0##*/} "Enabling ${ID/Device $MAC /}"
 				mpc -q toggle; mpc -q toggle

@@ -11,7 +11,7 @@ MAC="$( echo "$1" | grep -o "[[:xdigit:]:]\{17\}" | tr a-z A-Z )"
 
 . GLOBALS
 
-ID="$( bluetoothctl paired-devices | grep "$MAC" )"
+ID="$( bluetoothctl devices Paired | grep "$MAC" )"
 sleep $G_DELAY_SPKR
 
 if ! [ "$MAC" = "$( grep "defaults.bluealsa.device " /etc/alsa/conf.d/20-bluealsa.conf | \

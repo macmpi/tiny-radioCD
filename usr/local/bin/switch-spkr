@@ -10,7 +10,7 @@ SWITCHED=false
 curr_spkr="$( grep "defaults.bluealsa.device " /etc/alsa/conf.d/20-bluealsa.conf | \
 grep -o "[[:xdigit:]:]\{17\}" 2> /dev/null )"
 
-PAIRED="$( bluetoothctl paired-devices )"
+PAIRED="$( bluetoothctl devices Paired )"
 while read -r LINE; do
 	MAC="$( echo "$LINE" | grep -o "[[:xdigit:]:]\{17\}" )"
 	[ -z "$MAC" ] && break

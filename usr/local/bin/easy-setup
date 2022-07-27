@@ -94,7 +94,7 @@ if [ -e /sys/class/bluetooth/hci0 ] && [ -n "${Speaker// /}${Remote// /}" ]; the
 	logger -st ${0##*/} "Trying to pair new devices: $Speaker $Remote"
 
 	#  Bluetooth pairing & speaker connection
-	LIST="$(bluetoothctl paired-devices)"	# responds with capitalized MAC & name
+	LIST="$(bluetoothctl devices Paired)"	# responds with capitalized MAC & name
 
 	for device in Speaker Remote; do
 		device=$( eval "echo \$$device" )
