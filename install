@@ -56,7 +56,7 @@ grep -q "PRETTY_HOSTNAME=" /etc/machine-info || \
 echo "PRETTY_HOSTNAME=tiny radioCD" >> /etc/machine-info
 
 # Enable Wifi
-rc-update add wpa_supplicant boot 2>&1
+rc-update --quiet add wpa_supplicant boot
 
 install -m644 "$srcdir"/etc/motd /etc/motd
 sed -i '$ s/.$/v'"$version"' by macmpi\n\n/' /etc/motd
@@ -78,27 +78,27 @@ install -m644 "$srcdir"/etc/udev/rules.d/99-input.rules /etc/udev/rules.d/99-inp
 service inotifyd stop 2>&1
 install -m755 "$srcdir"/etc/init.d/inotifyd /etc/init.d/inotifyd
 install -m644 "$srcdir"/etc/conf.d/inotifyd /etc/conf.d/inotifyd
-rc-update add inotifyd default 2>&1
+rc-update --quiet add inotifyd default
 
 service easy-setup stop 2>&1
 install -m755 "$srcdir"/etc/init.d/easy-setup /etc/init.d/easy-setup
 install -m755 "$srcdir"/usr/local/bin/easy-setup /usr/local/bin/easy-setup
-rc-update add easy-setup default 2>&1
+rc-update --quiet add easy-setup default
 
 service tiny-radiocd stop 2>&1
 install -m755 "$srcdir"/etc/init.d/tiny-radiocd /etc/init.d/tiny-radiocd
 install -m755 "$srcdir"/usr/local/bin/radiocd-init /usr/local/bin/radiocd-init
-rc-update add tiny-radiocd default 2>&1
+rc-update --quiet add tiny-radiocd default
 
 service connect-spkr stop 2>&1
 install -m755 "$srcdir"/etc/init.d/connect-spkr /etc/init.d/connect-spkr
 install -m755 "$srcdir"/usr/local/bin/connect-spkr /usr/local/bin/connect-spkr
-rc-update add connect-spkr default 2>&1
+rc-update --quiet add connect-spkr default
 
 service monitor-spkr stop 2>&1
 install -m755 "$srcdir"/etc/init.d/monitor-spkr /etc/init.d/monitor-spkr
 install -m755 "$srcdir"/usr/local/bin/monitor-spkr /usr/local/bin/monitor-spkr
-rc-update add monitor-spkr default 2>&1
+rc-update --quiet add monitor-spkr default
 
 # Utilities
 install -m755 "$srcdir"/usr/local/bin/init-playqueue /usr/local/bin/init-playqueue
@@ -156,7 +156,7 @@ sed -i -e 's/^BLUEALSA_CONF=\"/BLUEALSA_CONF=\"-p a2dp-source /' \
 -e 's/  *\"$/\"/' /etc/conf.d/bluealsa
 
 
-rc-update add bluealsa default 2>&1
+rc-update --quiet add bluealsa default
 service bluealsa start 2>&1   # just for use to eventually pair after install
 
 
@@ -181,7 +181,7 @@ cat <<-EOF >> /etc/doas.d/doas.conf
 	EOF
 
 install -m644 "$srcdir"/etc/mpd.conf /etc/mpd.conf
-rc-update add mpd default 2>&1
+rc-update --quiet add mpd default
 
 service mpd start 2>&1
 while ! ( mpc -q > /dev/null 2>&1 ); do sleep 0.5 ; done  # let MPD settle
@@ -200,11 +200,12 @@ install -m644 "$srcdir"/etc/acpid.conf /etc/acpid.conf
 install -dm755 /etc/acpi/remote/
 install -m755 "$srcdir"/etc/acpi/remote/* /etc/acpi/remote/
 
+rc-update --quiet add acpid default
 
 ###############################
 # Remote mpc control over network via mpc clients
 
-rc-update add avahi-daemon default 2>&1
+rc-update --quiet add avahi-daemon default
 
 
 ###############################
@@ -220,6 +221,9 @@ arch=$(uname -m); [ ${arch%_64} = "x86" ] && . "$srcdir"/addons/x86
 
 ###############################
 # Preserve local specific stuff according to install modes
+
+# force service dependency tree update
+rc-update --update
 
 if !(grep -q "root=" /proc/cmdline); then  #we are not in sys mode (so data or diskless)
 	# stuff of matter for diskless or data mode

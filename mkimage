@@ -71,5 +71,8 @@ rm -f /etc/wpa_supplicant/wpa_supplicant.conf
 rm -f /etc/resolv.conf
 rm -rf /var/lib/bluetooth/*
 
+# force service dependency tree update
+rc-update --update
+
 grep -q "root=" /proc/cmdline || lbu commit -d
 
