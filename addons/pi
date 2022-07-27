@@ -41,8 +41,9 @@ ln -sfn brcmfmac43430-sdio.raspberrypi,3-model-b.txt \
 
 
 #################################
-# Modify SD content: easy-setup and boot options
-mount -o remount,rw /media/mmcblk0p1
+# Modify usercfg.txt content for boot options
+Pi_PATH="$( find /media -type d -path '*/.*' -prune -o -type f -name config.txt -exec dirname {} \; | head -1 )"
+mount -o remount,rw "$Pi_PATH"
 
 # Pi eventual supplements for config.txt or usrcfg.txt
 
@@ -51,32 +52,33 @@ mount -o remount,rw /media/mmcblk0p1
 # gpu_mem=16 to reduce memory footprint (requires _cd files to be installed)
 
 # Disable the rainbow splash screen (will not add if there and commented)
-grep -q "disable_splash=1" /media/mmcblk0p1/usercfg.txt || \
-echo "disable_splash=1" >> /media/mmcblk0p1/usercfg.txt
+grep -q "disable_splash=1" "$Pi_PATH"/usercfg.txt || \
+echo "disable_splash=1" >> "$Pi_PATH"/usercfg.txt
 
 # Set the bootloader delay to 0 seconds. Default is 1s if not specified.
 # (will not add if there and commented)
-grep -q "boot_delay=0" /media/mmcblk0p1/usercfg.txt || \
-echo "boot_delay=0" >> /media/mmcblk0p1/usercfg.txt
+grep -q "boot_delay=0" "$Pi_PATH"/usercfg.txt || \
+echo "boot_delay=0" >> "$Pi_PATH"/usercfg.txt
 
 # enable Bluetooth via overlays (post kernel 5.4.50)
 # (will not add if there and commented)
-grep -q "dtparam=krnbt=on" /media/mmcblk0p1/usercfg.txt || \
-echo "dtparam=krnbt=on" >> /media/mmcblk0p1/usercfg.txt
+grep -q "dtparam=krnbt=on" "$Pi_PATH"/usercfg.txt || \
+echo "dtparam=krnbt=on" >> "$Pi_PATH"/usercfg.txt
 # due to missing HW flowcontrol on Pi3b rev1.2 boards
 # one may want to limit baudrate with dtparam=krnbt_baudrate=<rate here>
 
 # built-in audio, and HDMI audio (will not add if there and commented)
-grep -q "dtparam=audio=on" /media/mmcblk0p1/usercfg.txt || \
-echo "dtparam=audio=on" >> /media/mmcblk0p1/usercfg.txt
+grep -q "dtparam=audio=on" "$Pi_PATH"/usercfg.txt || \
+echo "dtparam=audio=on" >> "$Pi_PATH"/usercfg.txt
 
 # set HDMI safe (will not add if there and commented)
-grep -q "hdmi_safe=1" /media/mmcblk0p1/usercfg.txt || \
-echo "hdmi_safe=1" >> /media/mmcblk0p1/usercfg.txt
+# https://www.raspberrypi.com/documentation/computers/config_txt.html#hdmi-mode
+grep -q "hdmi_safe=1" "$Pi_PATH"/usercfg.txt || \
+echo "hdmi_safe=1" >> "$Pi_PATH"/usercfg.txt
 
 # set HDMI boost to max (will not add if there and commented)
-grep -q "config_hdmi_boost" /media/mmcblk0p1/usercfg.txt || \
-echo "config_hdmi_boost=11" >> /media/mmcblk0p1/usercfg.txt
+grep -q "config_hdmi_boost" "$Pi_PATH"/usercfg.txt || \
+echo "config_hdmi_boost=7" >> "$Pi_PATH"/usercfg.txt
 
 # ON/OFF button on GPIO3
 #dtoverlay=gpio-shutdown
@@ -84,7 +86,7 @@ echo "config_hdmi_boost=11" >> /media/mmcblk0p1/usercfg.txt
 # External activity LED on GPIO 21
 #dtparam=act_led_gpio=21
 
-mount -o remount,ro /media/mmcblk0p1
+mount -o remount,ro "$Pi_PATH"
 
 
 #################################
