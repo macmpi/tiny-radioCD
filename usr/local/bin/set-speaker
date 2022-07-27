@@ -20,13 +20,13 @@ sed -i "s/^defaults.bluealsa.device.*/defaults.bluealsa.device \"$MAC\"/" /etc/a
 if ! grep -q "root=" /proc/cmdline ;then
 	. /etc/lbu/lbu.conf
 	! touch "/media/$LBU_MEDIA/$(hostname).apkovl.tar.gz" > /dev/null 2>&1; RO=$?
-	[ "$RO" -eq "0" ] && mount -o remount,rw /media/$LBU_MEDIA
-	zcat /media/$LBU_MEDIA/$(hostname).apkovl.tar.gz | \
+	[ "$RO" -eq "0" ] && mount -o remount,rw "/media/$LBU_MEDIA"
+	zcat "/media/$LBU_MEDIA/$(hostname).apkovl.tar.gz" | \
 	sed "s/^defaults.bluealsa.device.*/defaults.bluealsa.device \"$MAC\"/" \
-	| gzip > /media/$LBU_MEDIA/temp.tgz
-	mv /media/$LBU_MEDIA/temp.tgz /media/$LBU_MEDIA/$(hostname).apkovl.tar.gz
+	| gzip > "/media/$LBU_MEDIA/temp.tgz"
+	mv "/media/$LBU_MEDIA/temp.tgz" "/media/$LBU_MEDIA/$(hostname).apkovl.tar.gz"
 	sync
-	[ "$RO" -eq "0" ] && mount -o remount,ro /media/$LBU_MEDIA
+	[ "$RO" -eq "0" ] && mount -o remount,ro "/media/$LBU_MEDIA"
 fi
 
 
