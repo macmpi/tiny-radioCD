@@ -15,16 +15,16 @@ echo "Installing x86 specific tweaks"
 # adding nomodeset to boot option in grub.cfg & syslinux.cfg
 # some old NVIDIA GPUs have driver issues that collide once eudev is set
 # https://gitlab.alpinelinux.org/alpine/aports/-/issues/14010
-FILE="$(find /boot /media -type d -path '*/.*' -prune -o -type f -name grub.cfg 2>/dev/null | head -1)"
-if ! grep -q nomodeset "$FILE"; then
+x86_FILE="$(find /boot /media -type d -path '*/.*' -prune -o -type f -name grub.cfg 2>/dev/null | head -1)"
+if ! grep -q nomodeset "$x86_FILE"; then
 	echo "Setting nomodeset boot option in grub & syslinux.cfg"
-	MOUNTPOINT="$(df "$FILE" | awk '{ print $6 }' | tail -1)"
-	! touch "$FILE" > /dev/null 2>&1; RO=$?
-	[ $RO -eq "0" ] && mount -o remount,rw "$MOUNTPOINT"
-	sed -i 's/ quiet/ nomodeset quiet/' "$FILE"
-	sed -i 's/ quiet/ nomodeset quiet/' "${FILE%/*/*}/syslinux/syslinux.cfg"
+	x86_MOUNTPOINT="$(df "$x86_FILE" | awk '{ print $6 }' | tail -1)"
+	! touch "$x86_FILE" > /dev/null 2>&1; RO=$?
+	[ $RO -eq "0" ] && mount -o remount,rw "$x86_MOUNTPOINT"
+	sed -i 's/ quiet/ nomodeset quiet/' "$x86_FILE"
+	sed -i 's/ quiet/ nomodeset quiet/' "${x86_FILE%/*/*}/syslinux/syslinux.cfg"
 	sync
-	[ $RO -eq "0" ] && mount -o remount,ro "$MOUNTPOINT"
+	[ $RO -eq "0" ] && mount -o remount,ro "$x86_MOUNTPOINT"
 fi
 
 echo "*** WARNING!! Machine may not boot if missing GPU firmware ***"
