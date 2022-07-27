@@ -75,22 +75,27 @@ install -m644 "$srcdir"/etc/udev/rules.d/99-srX_change.rules /etc/udev/rules.d/9
 install -m644 "$srcdir"/etc/udev/rules.d/99-input.rules /etc/udev/rules.d/99-input.rules
 
 # Services
+service inotifyd stop 2>&1
 install -m755 "$srcdir"/etc/init.d/inotifyd /etc/init.d/inotifyd
 install -m644 "$srcdir"/etc/conf.d/inotifyd /etc/conf.d/inotifyd
 rc-update add inotifyd default 2>&1
 
+service easy-setup stop 2>&1
 install -m755 "$srcdir"/etc/init.d/easy-setup /etc/init.d/easy-setup
 install -m755 "$srcdir"/usr/local/bin/easy-setup /usr/local/bin/easy-setup
 rc-update add easy-setup default 2>&1
 
+service tiny-radiocd stop 2>&1
 install -m755 "$srcdir"/etc/init.d/tiny-radiocd /etc/init.d/tiny-radiocd
 install -m755 "$srcdir"/usr/local/bin/radiocd-init /usr/local/bin/radiocd-init
 rc-update add tiny-radiocd default 2>&1
 
+service connect-spkr stop 2>&1
 install -m755 "$srcdir"/etc/init.d/connect-spkr /etc/init.d/connect-spkr
 install -m755 "$srcdir"/usr/local/bin/connect-spkr /usr/local/bin/connect-spkr
 rc-update add connect-spkr default 2>&1
 
+service monitor-spkr stop 2>&1
 install -m755 "$srcdir"/etc/init.d/monitor-spkr /etc/init.d/monitor-spkr
 install -m755 "$srcdir"/usr/local/bin/monitor-spkr /usr/local/bin/monitor-spkr
 rc-update add monitor-spkr default 2>&1
@@ -178,7 +183,6 @@ cat <<-EOF >> /etc/doas.d/doas.conf
 install -m644 "$srcdir"/etc/mpd.conf /etc/mpd.conf
 rc-update add mpd default 2>&1
 
-service inotifyd stop 2>&1 # just in case running the script runs to update an existing install
 service mpd start 2>&1
 while ! ( mpc -q > /dev/null 2>&1 ); do sleep 0.5 ; done  # let MPD settle
 mpc -q rescan	# update mpd database: safe for --Menu-- as inotifyd/incrond is not running
@@ -198,7 +202,7 @@ install -m755 "$srcdir"/etc/acpi/remote/* /etc/acpi/remote/
 
 
 ###############################
-# Remote mpc control over network via inotifyd (or incrond)
+# Remote mpc control over network via mpc clients
 
 rc-update add avahi-daemon default 2>&1
 
