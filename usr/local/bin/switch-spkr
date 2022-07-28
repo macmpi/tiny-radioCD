@@ -24,6 +24,7 @@ while read -r LINE; do
 			set-speaker "$MAC"
 			bluetoothctl disconnect "$curr_spkr" > /dev/null 2>&1
 			service mpd restart > /dev/null 2>&1
+			while ! mpc -q > /dev/null 2>&1; do sleep 0.3; done	# let MPD settle
 			break
 		else
 			logger -st ${0##*/} "Failed to connect to ${LINE/Device $MAC /}"

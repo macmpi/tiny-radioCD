@@ -184,7 +184,7 @@ install -m644 "$srcdir"/etc/mpd.conf /etc/mpd.conf
 rc-update --quiet add mpd default
 
 service mpd start 2>&1
-while ! ( mpc -q > /dev/null 2>&1 ); do sleep 0.5 ; done  # let MPD settle
+while ! mpc -q > /dev/null 2>&1; do sleep 0.3; done	# let MPD settle
 mpc -q rescan	# update mpd database: safe for --Menu-- as inotifyd/incrond is not running
 mpc -q update
 
