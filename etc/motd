@@ -1,7 +1,13 @@
 
-Welcome to tiny-radioCD !
+Welcome to tiny-radioCD !                               x
+
 
 Headless CD & Radio player to Bluetooth Speaker and default audio port
 Remote control via bluetooth AVRCP and/or network mpc client
 
-            enjoy and feel free to customize            x
+               enjoy and feel free to customize
+
+
+Note: if you login from console you may want to disable acpid as some
+keys are captured to command the player: arrows, etc...
+

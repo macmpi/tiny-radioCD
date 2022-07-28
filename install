@@ -59,7 +59,7 @@ echo "PRETTY_HOSTNAME=tiny radioCD" >> /etc/machine-info
 rc-update --quiet add wpa_supplicant boot
 
 install -m644 "$srcdir"/etc/motd /etc/motd
-sed -i '$ s/.$/v'"$version"' by macmpi\n\n/' /etc/motd
+sed -i 's/x$/v'"$version"' by macmpi/' /etc/motd
 
 setup-devd -C udev	# do not start service right now
 
@@ -275,6 +275,7 @@ For Bluetooth speaker association (and eventual remote command pairing), do:
 Take note of your speaker MAC Address XX:XX:XX:XX:XX:XX
 Then finish speaker setup with the below command:
 >set-speaker "XX:XX:XX:XX:XX:XX"
+If on diskless install, save changes with: >lbu commit -d
 
      Restart to enjoy your new tiny-radioCD !...
 "
