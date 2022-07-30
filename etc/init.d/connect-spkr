@@ -8,7 +8,7 @@ description="Connects Bluetooth speaker for MPD"
 
 depend() {
 	use logger
-	use bluealsa
+	after bluealsa
 	after mpd
 	before tiny-radiocd
 }

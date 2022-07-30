@@ -22,9 +22,9 @@ while read -r LINE; do
 			SWITCHED=true
 			logger -st ${0##*/} "Connected to ${LINE/Device $MAC /}"
 			set-speaker "$MAC"
+			touch /usr/share/alsa/alsa.conf	# force alsa-lib to reload pcm definition
+			mpc -q toggle; mpc -q toggle
 			bluetoothctl disconnect "$curr_spkr" > /dev/null 2>&1
-			service mpd restart > /dev/null 2>&1
-			while ! mpc -q > /dev/null 2>&1; do sleep 0.3; done	# let MPD settle
 			break
 		else
 			logger -st ${0##*/} "Failed to connect to ${LINE/Device $MAC /}"
