@@ -3,6 +3,23 @@
 # Part of tiny-radioCD project, originally designed & hand-crafted by macmpi
 # check License at project home https://github.com/macmpi/tiny-radioCD
 
+save_lbu() {
+###############################                                                                            
+# If not in sys mode, update file within apkovl archive
+# as we just replace MAC address, and do not modify file length
+# we can do a sed within tar file                              
+# (we avoid lbu commit -d as it does not play nice with inotifyd)
+	. /etc/lbu/lbu.conf
+	! touch "/media/$LBU_MEDIA/$(hostname).apkovl.tar.gz" > /dev/null 2>&1; RO=$?
+	[ "$RO" -eq "0" ] && mount -o remount,rw /media/$LBU_MEDIA
+	zcat /media/$LBU_MEDIA/$(hostname).apkovl.tar.gz | \
+		sed "s/^defaults.bluealsa.device.*/defaults.bluealsa.device \"$MAC\"/" | 
+			gzip > /media/$LBU_MEDIA/temp.tgz
+	mv /media/$LBU_MEDIA/temp.tgz /media/$LBU_MEDIA/$(hostname).apkovl.tar.gz
+	sync
+	[ "$RO" -eq "0" ] && mount -o remount,ro /media/$LBU_MEDIA
+}
+
 
 #Expects BT MAC address passed as input
 MAC="$( echo "$1" | grep -o "[[:xdigit:]:]\{17\}" | tr a-z A-Z )"
@@ -11,22 +28,6 @@ MAC="$( echo "$1" | grep -o "[[:xdigit:]:]\{17\}" | tr a-z A-Z )"
 
 sed -i "s/^defaults.bluealsa.device.*/defaults.bluealsa.device \"$MAC\"/" /etc/alsa/conf.d/20-bluealsa.conf
 
-###############################
-# If not in sys mode, update file within apkovl archive
-# as we just replace MAC address, and do not modify file length
-# we can do a sed within tar file
-# (we avoid lbu commit -d as it does not play nice with inotifyd)
- 
-if ! grep -q "root=" /proc/cmdline ;then
-	. /etc/lbu/lbu.conf
-	! touch "/media/$LBU_MEDIA/$(hostname).apkovl.tar.gz" > /dev/null 2>&1; RO=$?
-	[ "$RO" -eq "0" ] && mount -o remount,rw "/media/$LBU_MEDIA"
-	zcat "/media/$LBU_MEDIA/$(hostname).apkovl.tar.gz" | \
-	sed "s/^defaults.bluealsa.device.*/defaults.bluealsa.device \"$MAC\"/" \
-	| gzip > "/media/$LBU_MEDIA/temp.tgz"
-	mv "/media/$LBU_MEDIA/temp.tgz" "/media/$LBU_MEDIA/$(hostname).apkovl.tar.gz"
-	sync
-	[ "$RO" -eq "0" ] && mount -o remount,ro "/media/$LBU_MEDIA"
-fi
-
+grep -q "root=" /proc/cmdline || save_lbu &
+exit 0
 
