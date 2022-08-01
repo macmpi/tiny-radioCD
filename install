@@ -110,7 +110,6 @@ install -m755 "$srcdir"/usr/local/bin/set-speaker /usr/local/bin/set-speaker
 install -m755 "$srcdir"/usr/local/bin/update /usr/local/bin/update
 install -m755 "$srcdir"/usr/local/bin/pair-device /usr/local/bin/pair-device
 install -m755 "$srcdir"/usr/local/bin/switch-spkr /usr/local/bin/switch-spkr
-install -m755 "$srcdir"/usr/local/bin/delayed-dcnct /usr/local/bin/delayed-dcnct
 
 
 # Custom MPD content: playlists & tracks   mpd:audio
@@ -275,7 +274,6 @@ For Bluetooth speaker association (and eventual remote command pairing), do:
 Take note of your speaker MAC Address XX:XX:XX:XX:XX:XX
 Then finish speaker setup with the below command:
 >set-speaker "XX:XX:XX:XX:XX:XX"
-If on diskless install, save changes with: >lbu commit -d
 
      Restart to enjoy your new tiny-radioCD !...
 "

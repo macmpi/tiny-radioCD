@@ -14,6 +14,21 @@
 # inspired by:
 # https://github.com/Arkq/bluez-alsa/wiki/Using-BlueALSA-as-default-ALSA-PCM#automation
 
+
+delayed_disconnect() {
+	. GLOBALS
+
+	sleep $G_DELAY_SPKR
+
+	if ! [ "$1" = "$( grep "defaults.bluealsa.device " /etc/alsa/conf.d/20-bluealsa.conf | \
+		grep -o "[[:xdigit:]:]\{17\}" 2> /dev/null )" ]; then
+			logger -t ${0##*/} "Disconnecting ${2/Device $1 /}"
+			bluetoothctl disconnect "$MAC" > /dev/null 2>&1
+	fi
+	exit 0
+}
+
+
 # create a temporary named pipe to communicate with bluealsa-cli monitor
 FIFO_PATH=$(mktemp -u)
 mkfifo $FIFO_PATH
@@ -37,7 +52,7 @@ while read -r LINE; do
 				logger -t ${0##*/} "Enabling ${ID/Device $MAC /}"
 				mpc -q toggle; mpc -q toggle
 			else
-				delayed-dcnct "$MAC" &
+				delayed_disconnect "$MAC" "$ID" &
 			fi
 		fi
 	fi
