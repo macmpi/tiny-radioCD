@@ -2,10 +2,10 @@
 # check License at project home https://github.com/macmpi/tiny-radioCD
 
 # Delay in seconds to wait before paired speaker is disconnected if not default
-G_DELAY_SPKR=10
+G_DELAY_SPKR=15
 
 # Delay in second for quick PLAY-PAUSE and NEXT or PREVIOUS transitions
-G_DELAY_KEYS="0.8"
+G_DELAY_KEYS="1.0"
 
 # Set CD read speed: 8 is 8x (tradeoff between drive noise and playback quality)
 G_CD_SPEED=8
