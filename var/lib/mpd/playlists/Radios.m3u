@@ -1,16 +1,16 @@
 #EXTM3U
 
 #EXTINF:-1, France-Inter - Direct
-http://direct.franceinter.fr/live/franceinter-midfi.mp3
+http://direct.franceinter.fr/live/franceinter-hifi.aac
 
 #EXTINF:-1, France-Info - Direct
-http://direct.franceinfo.fr/live/franceinfo-midfi.mp3
+http://direct.franceinfo.fr/live/franceinfo-hifi.aac
 
 #EXTINF:-1, France-Culture - Direct
-http://direct.franceculture.fr/live/franceculture-midfi.mp3 
+http://direct.franceculture.fr/live/franceculture-hifi.aac
 
 #EXTINF:-1, Radio Classique - Direct
-http://radioclassique.ice.infomaniak.ch/radioclassique-high
+http://radioclassique.ice.infomaniak.ch/radioclassique-high.mp3
 
 #EXTINF:-1, RFM - Direct
 https://stream.rfm.fr/rfm-wr14.aac
@@ -23,3 +23,6 @@ http://stream.radioparadise.com/aac-128
 
 #EXTINF:-1, TSF Jazz - Direct
 http://tsfjazz.ice.infomaniak.ch:80/tsfjazz-high
+
+#EXTINF:-1, Radio Swiss Jazz - Direct
+http://stream.srg-ssr.ch/m/rsj/aacp_96
