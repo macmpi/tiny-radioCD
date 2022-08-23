@@ -12,7 +12,7 @@ version="0.6"
 
 
 
-! [ $(id -u) -eq 0 ] && { echo >&2 "Please run as root (i.e. with sudo)"; exit 1; }
+! [ $(id -u) -eq 0 ] && { echo >&2 "Please run as root (i.e. with doas)"; exit 1; }
 
 srcdir="$(pwd)"  # requires absolute paths for repofiles
 

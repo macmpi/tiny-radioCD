@@ -6,7 +6,7 @@
 
 # Makes an image & remove sshd; optionally locks-out root
 
-! [ $(id -u) -eq 0 ] && { echo >&2 "Please run as root (i.e. with sudo)"; exit 1; }
+! [ $(id -u) -eq 0 ] && { echo >&2 "Please run as root (i.e. with doas)"; exit 1; }
 
 
 ########## Install tiny-radioCD
