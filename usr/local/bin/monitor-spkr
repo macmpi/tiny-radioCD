@@ -49,7 +49,9 @@ while read -r LINE; do
 		if [ -n "$MAC" ]; then
 			ID="$( bluetoothctl devices Paired | grep "$MAC" )"
 			if ( grep -q "$MAC" /etc/alsa/conf.d/20-bluealsa.conf ) ;then
-				logger -t ${0##*/} "Enabling ${ID/Device $MAC /}"
+				PCM="$( echo "$LINE" | grep -o /org.* )"
+				CODEC="$( bluealsa-cli info $PCM | grep Selected )"
+				logger -t ${0##*/} "Enabling ${ID/Device $MAC /}, $CODEC"
 				mpc -q toggle; mpc -q toggle
 			else
 				delayed_disconnect "$MAC" "$ID" &
