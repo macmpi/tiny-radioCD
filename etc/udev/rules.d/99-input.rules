@@ -1,9 +1,0 @@
-# Part of tiny-radioCD project, originally designed & hand-crafted by macmpi
-# check License at project home https://github.com/macmpi/tiny-radioCD
-
-# diagnose with udevadm monitor --property --udev
-
-# manage Bluetooth devices that can come & go
-ACTION=="add", SUBSYSTEM=="input", ENV{ID_BUS}=="bluetooth", ENV{ID_INPUT_KEY}=="1", \
-ENV{DEVNAME}=="/dev/input/event*", \
-RUN+="/usr/local/bin/btdevmngr $name"

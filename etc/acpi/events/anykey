@@ -1,0 +1,8 @@
+
+# Part of tiny-radioCD project, originally designed & hand-crafted by macmpi
+# check License at project home https://github.com/macmpi/tiny-radioCD
+
+# Pass all events to our keys handler script
+event=.*
+action=/etc/acpi/keys_handler.sh %e
+
