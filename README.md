@@ -3,8 +3,9 @@
 
 This personal project is geared towards simple & essential use-cases for casual listeners using Bluetooth speakers, and missing their good-old Audio CDs playback...
 
+Check-out our minimalistic USB-powered [PiZeroWed-Mac mini](https://github.com/macmpi/tiny-radioCD/wiki/PiZeroWed-Mac-mini) !
 
-## <u>Main Features:</u>
+## Main Features:
 
 - Audio-CD & web radio player
 
@@ -16,10 +17,9 @@ This personal project is geared towards simple & essential use-cases for casual 
 
 - Headless operation, one-touch update
 
-\
+
 **tiny-radioCD** just relies on [MPD](https://www.musicpd.org/), ALSA and [bluez-alsa](https://github.com/Arkq/bluez-alsa/): it does not need to provide a graphical remote UI.\
-Typically runs in 50MB of RAM on a low-cost PiZero device (135 MB rootf suitable for RAM-only operation).\
-Check-out our minimalistic USB-powered [PiZeroWed-Mac mini](https://github.com/macmpi/tiny-radioCD/wiki/PiZeroWed-Mac-mini)!
+Typically runs in about 30MB of RAM on a low-cost PiZero device (125 MB rootf suitable for RAM-only operation).
 
 Though mostly tested on Pi & x86/64, it would run on any AlpineLinux supported platform (diskless/data/sys modes).\
 Some ready-to-use images are available (Raspberry Pi armhf ram-only SD archive for instance).\
@@ -37,7 +37,7 @@ Typically, the low-cost first-generation ***FireTV remote*** (& clone) works gre
 ***USB Keyboards*** with multimedia keys are supported too.
 
 With network availability, any ***mpc client application*** can easily connect to **tiny-radioCD** player with Avahi discovery, and provide convenient user interface.\
-[***MaximumMPD***](https://itunes.apple.com/gb/app/maximummpd/id1437096437?mt=8) on iOS is a good example of such clients, but there are many other available on any platforms.
+***MaximumMPD*** on [iOS](https://itunes.apple.com/gb/app/maximummpd/id1437096437?mt=8) or Android is a good example of such client, but there are many other available on any platforms.
 
 ***Hardware buttons*** (power on/off, eject) availability depend on actual devices running tiny-radioCD, and can easily be customized: i.e. on Pi, simple on/off push-button can be enabled with `dtoverlay=gpio-shutdown` in `usercfg.txt`.
 
@@ -47,21 +47,22 @@ With network availability, any ***mpc client application*** can easily connect t
 
 ## Install procedure:
 
-If you don't use [ready-made images](https://github.com/macmpi/tiny-radioCD/wiki/Pre-built-images), just do the following on your [AlpineLinux device](https://wiki.alpinelinux.org/wiki/Installation) with internet access:
+Some [ready-made images](https://github.com/macmpi/tiny-radioCD/wiki/Pre-built-images) images are available as "diskless" setup.\
+They are produced with the included `unattended.sh` script to be added into [Alpine headless](https://github.com/macmpi/alpine-linux-headless-bootstrap/ environment.\
+Alternatively user may choose to create own install, starting from an existing [AlpineLinux setup](https://wiki.alpinelinux.org/wiki/Installation) with internet access:
 ```
 cd /tmp
 wget -O tiny-radioCD.zip https://github.com/macmpi/tiny-radioCD/archive/master.zip
 unzip -oq tiny-radioCD.zip
 cd tiny-radioCD
 chmod +x install
-sudo ./install
+./install
 ```
 
 After install, bluetooth speaker pairing (and eventual remote command pairing) may be done under console or ssh (alternatively, check *[easy-setup](https://github.com/macmpi/tiny-radioCD/wiki)* section in Wiki):\
-`>bluetoothctl`     After a <u>scan</u>, make sure you <u>pair</u>, <u>connect</u> and <u>trust</u> your bluetooth devices.\
-Take note of your speaker MAC address `XX:XX:XX:XX:XX:XX`\
-Then finish speaker setup with the below command:\
-`>set-speaker "XX:XX:XX:XX:XX:XX"`
+`>bluetoothctl`     After a *scan*, make sure you *pair*, *connect* and *trust* your bluetooth devices.\
+Take note of your speaker MAC address `XX:XX:XX:XX:XX:XX`,and then finish speaker setup with the following command:\
+`>set-speaker "XX:XX:XX:XX:XX:XX"`.
 
 Reboot to take advantage of your new **tiny-radioCD**!
 
@@ -75,12 +76,13 @@ Reboot to take advantage of your new **tiny-radioCD**!
 - replace sudo by doas
 - use busybox inotifyd instead of incrond
 - improve Bluetooth devices detection (requires bluealsa-cli & Bluez >= 5.65)
-- improve CD handling (udev rule & helper)
+- improve CD playback (mpd >= 0.23.9) & handling (udev rule & helper)
 - add volume & mute keys support
 - easy-setup available on all platforms
-- various fixes (HDMI, services dependencies,TSF stream,...)
+- various fixes (HDMI settings, services dependencies,streams updates,...)
 - Pi: enable Bluetooth via overlays
 - x86: nomodeset
+- automation script for building images with [Alpine headless](https://github.com/macmpi/alpine-linux-headless-bootstrap/) bootstrapping utility
 
 0.5: (May 17th 2020)
 - initial release, Alpine 3.11
