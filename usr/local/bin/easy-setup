@@ -4,19 +4,7 @@
 # check License at project home https://github.com/macmpi/tiny-radioCD
 
 
-
-# diskless: check ssh key existence and save accordingly
-if [ -e /etc/tiny-radiocd_ssh_nokeys ] && { \
-[ -n "$(find /etc/dropbear/ -name 'dropbear_*_host_key' 2> /dev/null | head -1)" ] || \
-[ -n "$(find /etc/ssh/ -name 'ssh_host_*' 2> /dev/null | head -1)" ]; }; then
-		rm -f /etc/tiny-radiocd_ssh_nokeys
-		lbu commit -d
-fi
-
-
-# Manage Settings and files
-[ -d /etc/tiny-radioCD ] || exit   #no easy config directory
-
+import_settings() {
 . /etc/tiny-radioCD/tiny-radioCD.conf
 TOUCHED=false
 
@@ -169,6 +157,26 @@ fi
 if $TOUCHED; then
 	grep -q "root=" /proc/cmdline || lbu commit -d
 fi
+
+}
+
+
+## Main
+
+# diskless: check ssh key existence and save accordingly
+if [ -e /etc/tiny-radiocd_ssh_nokeys ] && { \
+[ -n "$(find /etc/dropbear/ -name 'dropbear_*_host_key' 2> /dev/null | head -1)" ] || \
+[ -n "$(find /etc/ssh/ -name 'ssh_host_*' 2> /dev/null | head -1)" ]; }; then
+	rm -f /etc/tiny-radiocd_ssh_nokeys
+	lbu commit -d
+fi
+
+# Manage Settings and files
+[ -d /etc/tiny-radioCD ] && import_settings
+
+# patch /etc/mpd.conf to set CD_SPEED which may be set/updated by GLOBALS file
+. GLOBALS
+sed -i 's/speed \".*\".*$/speed \"'$G_CD_SPEED'\"/' /etc/mpd.conf
 
 exit 0
 
