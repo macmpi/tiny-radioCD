@@ -48,7 +48,8 @@ With network availability, any ***mpc client application*** can easily connect t
 ## Install procedure:
 
 Some [ready-made images](https://github.com/macmpi/tiny-radioCD/wiki/Pre-built-images) images are available as "diskless" setup.\
-They are produced with the included `unattended.sh` script to be added into [Alpine headless](https://github.com/macmpi/alpine-linux-headless-bootstrap/ environment.\
+They are produced with the included `unattended.sh` script to be added into [Alpine headless boostrap](https://github.com/macmpi/alpine-linux-headless-bootstrap/) environment.
+
 Alternatively user may choose to create own install, starting from an existing [AlpineLinux setup](https://wiki.alpinelinux.org/wiki/Installation) with internet access:
 ```
 cd /tmp
@@ -64,7 +65,7 @@ After install, bluetooth speaker pairing (and eventual remote command pairing) m
 Take note of your speaker MAC address `XX:XX:XX:XX:XX:XX`,and then finish speaker setup with the following command:\
 `>set-speaker "XX:XX:XX:XX:XX:XX"`.
 
-Reboot to take advantage of your new **tiny-radioCD**!
+Reboot to take advantage of your new **tiny-radioCD** !
 
 
 
@@ -82,7 +83,7 @@ Reboot to take advantage of your new **tiny-radioCD**!
 - various fixes (HDMI settings, services dependencies,streams updates,...)
 - Pi: enable Bluetooth via overlays
 - x86: nomodeset
-- automation script for building images with [Alpine headless](https://github.com/macmpi/alpine-linux-headless-bootstrap/) bootstrapping utility
+- automation script for building images with Alpine headless bootstrapping utility
 
 0.5: (May 17th 2020)
 - initial release, Alpine 3.11
