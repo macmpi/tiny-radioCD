@@ -15,67 +15,67 @@ logger -t ${0##*/} "$2"
 case "$2" in
 
 BACK)
-	/etc/acpi/remote/RANDOM
+	/etc/acpi/remote/RANDOM &
 ;;
 DOWN)
-	/etc/acpi/remote/POWEROFF
+	/etc/acpi/remote/POWEROFF &
 ;;
 CDEJECT)
-	/etc/acpi/remote/EJECT
+	/etc/acpi/remote/EJECT &
 ;;
 CDEJECTCLOSE)
-	/etc/acpi/remote/EJECT
+	/etc/acpi/remote/EJECT &
 ;;
 FF)
-	/etc/acpi/remote/NEXT
+	/etc/acpi/remote/NEXT &
 ;;
 HOMEPAGE)
-	/etc/acpi/remote/TRACK_1
+	/etc/acpi/remote/TRACK_1 &
 ;;
 KPENTER)
-	/etc/acpi/remote/NIL
+	/etc/acpi/remote/NIL &
 ;;
 LEFT)
-	/etc/acpi/remote/REWIND_TRACK
+	/etc/acpi/remote/REWIND_TRACK &
 ;;
 MENU)
-	/etc/acpi/remote/SEQUENCE
+	/etc/acpi/remote/SEQUENCE &
 ;;
 MUTE)
-	/etc/acpi/remote/MUTE
+	/etc/acpi/remote/MUTE &
 ;;
 CDNEXT)
-	/etc/acpi/remote/NEXT
+	/etc/acpi/remote/NEXT &
 ;;
 CDPAUSE)
-	/etc/acpi/remote/PLAY_PAUSE
+	/etc/acpi/remote/PLAY_PAUSE &
 ;;
 CDPLAY2)
-	/etc/acpi/remote/PLAY_PAUSE
+	/etc/acpi/remote/PLAY_PAUSE &
 ;;
 CDPLAY)
-	/etc/acpi/remote/PLAY_PAUSE
+	/etc/acpi/remote/PLAY_PAUSE &
 ;;
 PBTN)
-	/etc/acpi/remote/POWEROFF
+	/etc/acpi/remote/POWEROFF &
 ;;
 CDPREV)
-	/etc/acpi/remote/PREVIOUS
+	/etc/acpi/remote/PREVIOUS &
 ;;
 REW)
-	/etc/acpi/remote/PREVIOUS
+	/etc/acpi/remote/PREVIOUS &
 ;;
 RIGHT)
-	/etc/acpi/remote/SWAP_PLAYLISTS
+	/etc/acpi/remote/SWAP_PLAYLISTS &
 ;;
 UP)
-	/etc/acpi/remote/EJECT
+	/etc/acpi/remote/EJECT &
 ;;
 VOLDN)
-	/etc/acpi/remote/VOLUMEDOWN
+	/etc/acpi/remote/VOLUMEDOWN &
 ;;
 VOLUP)
-	/etc/acpi/remote/VOLUMEUP
+	/etc/acpi/remote/VOLUMEUP &
 ;;
 esac
 

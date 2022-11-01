@@ -3,5 +3,5 @@
 # Part of tiny-radioCD project, originally designed & hand-crafted by macmpi
 # check License at project home https://github.com/macmpi/tiny-radioCD
 
-update
+menu-cmd update
 
