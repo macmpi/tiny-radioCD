@@ -12,7 +12,7 @@ case "$1" in
 		mpc -q play
 		sleep 3
 		mpc -q clear
-		poweroff
+		poweroff &
 	;;
 	"reboot")
 		mpc -q clear
@@ -21,7 +21,7 @@ case "$1" in
 		mpc -q play
 		sleep 3
 		mpc -q clear
-		reboot
+		reboot &
 	;;
 	"eject")
 		grep -q "CD" /tmp/.SOURCE && mpc -q clear	# stop only if playing CD
@@ -29,13 +29,13 @@ case "$1" in
 		/lib/udev/cdrom_id -e /dev/sr0 > /dev/null 2>&1
 	;;
 	"switch-spkr")
-		switch-spkr
+		switch-spkr &
 	;;
 	"connect-spkr")
-		connect-spkr
+		connect-spkr &
 	;;
 	"update")
-		update
+		update &
 	;;
 	*)
 		logger -st ${0##*/} "Bad command: $1" && exit 1
