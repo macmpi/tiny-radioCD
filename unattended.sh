@@ -45,9 +45,8 @@ cat <<-EOF > ANSWERFILE
 	# Add first mirror (CDN)
 	APKREPOSOPTS="-1"
 
-	# Create admin user
-	# dirty workaround to not create any user
-	USEROPTS=-h
+	# Do not create any user
+	USEROPTS=none
 
 	# Install Openssh
 	SSHDOPTS=none
