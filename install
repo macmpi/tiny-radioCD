@@ -53,7 +53,7 @@ echo "tiny-radiocd" > /etc/hostname && \
 hostname -F /etc/hostname
 
 grep -q "PRETTY_HOSTNAME=" /etc/machine-info || \
-echo "PRETTY_HOSTNAME=tiny radioCD" >> /etc/machine-info
+echo "PRETTY_HOSTNAME=\"tiny radioCD\"" >> /etc/machine-info
 
 # Enable Wifi
 rc-update --quiet add wpa_supplicant boot
