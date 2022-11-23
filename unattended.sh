@@ -31,7 +31,7 @@ cat <<-EOF > ANSWERFILE
 	DEVDOPTS=mdev
 
 	# Contents of /etc/network/interfaces
-	INTERFACESOPTS="$(cat /etc/network/interfaces)"
+	INTERFACESOPTS=none
 
 	# Set Public nameserver
 	DNSOPTS="-n 208.67.222.222"
@@ -89,6 +89,10 @@ logger -st ${0##*/} "Setting-up tiny-radioCD (takes time)..."
 
 ###  Wrapping-up & archiving generic image
 logger -st ${0##*/} "Fine-tuning and archiving generic image in /tmp (takes time)..."
+
+# diskless: do not reveal in distributed image & is regenerated at boot by dbus post-install
+rm /etc/machine-id
+
 . /etc/lbu/lbu.conf
 OVLPATH="/media/$LBU_MEDIA"
 
@@ -109,12 +113,6 @@ if grep -q "Raspberry Pi" /proc/cpuinfo; then
 fi
 
 # Archiving generic image
-#cd /tmp
-#tar -czf image_"$(uname -m)".tgz -C $OVLPATH \
-#--exclude='./unattended.sh' \
-#--exclude='./interfaces' \
-#--exclude='./wpa_supplicant.conf' \
-#.
 cd "$OVLPATH"
 find . -type d -path '*/.*' -prune -o \
 	-type f -path './unattended.sh' -prune -o \
