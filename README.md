@@ -78,7 +78,7 @@ Reboot to take advantage of your new **tiny-radioCD** !
 - improve CD playback (mpd >= 0.23.9) & handling (udev rule & helper)
 - add volume & mute keys support
 - easy-setup available on all platforms
-- replace sudo by doas, incrond by busybox inotifyd, busybox acpid by acpid
+- replace sudo by doas, incrond by busybox inotifyd, busybox acpid by acpid, expect by sexpect
 - various fixes (HDMI settings, services dependencies,streams updates,...)
 - Pi: enable Bluetooth via overlays
 - x86: nomodeset

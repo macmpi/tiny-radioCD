@@ -37,7 +37,7 @@ install -m644 "$srcdir"/etc/apk/repositories /etc/apk/repositories
 
 apk -U upgrade
 
-apk add doas wpa_supplicant acpid udev cdparanoia mpc avahi expect \
+apk add doas wpa_supplicant acpid udev cdparanoia mpc avahi sexpect \
 mpd bluez-alsa bluez-alsa-utils alsa-utils 2>&1 \
 || { echo >&2 "Base packages install failed, exiting! (for clues: apk -s fix)"; exit 1; }
 

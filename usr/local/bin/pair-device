@@ -1,4 +1,4 @@
-#!/usr/bin/expect -f
+#!/bin/sh
 
 # Part of tiny-radioCD project, originally designed & hand-crafted by macmpi
 # check License at project home https://github.com/macmpi/tiny-radioCD
@@ -7,83 +7,54 @@
 # Pairs by MAC Address (preferred) of by device name (or portion of it)
 # Those references are provided as a string in input parameter
 # MAC in CAPITALS, name portions without any special characters ()[], spaces OK
-# output parameter delivers MAC address is pairing is successful
+# output parameter delivers MAC address if pairing is successful
 
-set reference [lindex $argv 0]; # ref might be MAC address (preferred) or a name portion
-set address ""
-set prompt "#"
-set passkey "nil";
+REFERENCE="$1" # ref might be MAC address (preferred) or a name portion
+MAC=""
+PROMPT="^.*].*#"
 
-proc abort {} {
-	global prompt
-	global address
-	expect $prompt
-	if { "$address" != "" } {
-		send "remove $address\r"
-		expect $prompt
-	}
-	send "exit\r"
-	expect eof
-}
+export SEXPECT_SOCKFILE=/tmp/SOCKFILE
+sexpect spawn -autowait bluetoothctl --agent NoInputNoOutput
 
-log_user 0;      # suppress all logs to stdout: remove to enable or log_user 1
-spawn bluetoothctl
-expect $prompt
+sexpect expect -ex "Agent registered" > /dev/null 2>&1
+sexpect expect -anchor -re "$PROMPT" > /dev/null 2>&1
 
-set timeout 1;   # if by chance is in available devices list, we save discovery
-send "devices\r"
-expect {
-	"Device *$reference" {regexp {.*(([0-9A-F]{2}:){5}([0-9A-F]{2}))} $expect_out(buffer) -> address}
-}
-expect $prompt
+# To try save (long) discovery, check if already available in devices list
+sexpect send -enter "devices" > /dev/null 2>&1
+sexpect expect -timeout 1 -anchor -re "^.*Device .*$REFERENCE.*" > /dev/null 2>&1
+MAC="$( sexpect expect_out | grep "$REFERENCE" | grep -o "[[:xdigit:]:]\{17\}" )"
 
+# Go for discovery scan
+if [ -z "$MAC" ]; then
+	sexpect send -enter "scan on" > /dev/null 2>&1
+	sexpect expect -ex "Discovery started" > /dev/null 2>&1
 
-if { "$address" == "" } {
-	send "scan on\r";      #initiate discovery & search reference
-	set timeout 60
-	expect {
-		-re "\[^L\]\\]\\sDevice\\s.*$reference" \
-		{regexp {.*(([0-9A-F]{2}:){5}([0-9A-F]{2}))} $expect_out(buffer) -> address}
-		timeout {abort; exit 1}
-	}
+	sexpect expect -timeout 45 -anchor -re "^.*[^L].*] Device .*$REFERENCE.*" > /dev/null 2>&1
+	MAC="$( sexpect expect_out | grep "$REFERENCE" | grep -o "[[:xdigit:]:]\{17\}" )"
 
-	send "scan off\r";    # stop discovery
-	expect $prompt
-}
+	sexpect send -enter "scan off" > /dev/null 2>&1
+	sexpect expect -ex "Discovery stopped" > /dev/null 2>&1
+	sexpect expect -anchor -re "$PROMPT" > /dev/null 2>&1
+fi
 
+# Go for Pairing & trust
+if [ -n "$MAC" ]; then
+	sexpect send -enter "pair $MAC" > /dev/null 2>&1
+	sexpect expect -timeout 5 -ex "Pairing successful" > /dev/null 2>&1
+	if sexpect expect_out | grep -q "Pairing successful"; then
+		sexpect send -enter "trust $MAC" > /dev/null 2>&1
+		sexpect expect -anchor -re "$PROMPT" > /dev/null 2>&1
+	else
+		MAC=""
+	fi
+fi
 
-send "pair $address\r"
-set timeout 10
-expect {
-	"Pairing successful" {}
-	"*Confirm passkey*\(yes\/no\):" {set passkey "confirm" }
-	"*Enter PIN code:"  {set passkey "pin" }
-	timeout {abort; exit 1}
-}
+sexpect send -enter exit > /dev/null 2>&1
 
-if { "$passkey" != "nil" } {
-	set timeout 15;     # give time for authenticated pairings
-	if { "$passkey" == "confirm" } { send "yes\r" }
-	if { "$passkey" == "pin" } { send "0000\r" }
-	expect {
-		"Pairing successful" {}
-		timeout {abort; exit 1}
-	}
-}
-expect $prompt
-
-set timeout 2
-send "trust $address\n"
-expect "*trust succeeded";     # purely local no error expected
-expect $prompt
-
-send "connect $address\n";     # just for fun, we do not care much if fails
-expect "Connection successful"
-expect $prompt
-
-send "exit\r"
-expect eof
-
-puts "$address"
-exit 0
+echo "$MAC"
+if [ -n "$MAC" ]; then
+	exit 0
+else
+	exit 1
+fi
 
