@@ -66,7 +66,14 @@ cat <<-EOF > ANSWERFILE
 
 	EOF
 
-setup-alpine -ef ANSWERFILE
+# patch setup-alpine to avoid unwanted networking services restart
+# https://gitlab.alpinelinux.org/alpine/alpine-conf/-/merge_requests/99
+sed -i 's/openrc boot/openrc -n boot/' /sbin/setup-alpine
+sed -i 's/openrc default/openrc -n default/' /sbin/setup-alpine
+
+# trick setup-alpine to assume existing SSH connection and therefore not reset interfaces
+SSH_CONNECTION="FAKE" setup-alpine -ef ANSWERFILE
+
 
 # for low RAM devices (512K) increase available RAM in rootfs to store compressed image
 SIZE="$( df | grep '^tmpfs.*\/$' | awk '{printf $2}' )"
