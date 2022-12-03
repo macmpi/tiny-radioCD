@@ -53,6 +53,7 @@ sexpect send -enter exit > /dev/null 2>&1
 
 echo "$MAC"
 if [ -n "$MAC" ]; then
+	bluetoothctl connect "$MAC" > /dev/null 2>&1
 	exit 0
 else
 	exit 1
