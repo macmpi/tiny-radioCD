@@ -32,13 +32,6 @@ rc-update del hwclock boot 2>&1
 service swclock start 2>&1
 rc-update add swclock boot 2>&1
 
-# Fix eventually missing brcm NVRAM firmware file for PiZeroW
-# will only work on sys mode (other modes /lib/firmware is not writeable initramfs)
-grep -q "Raspberry Pi" /proc/cpuinfo && \
-! [ -f /lib/firmware/brcm/brcmfmac43430-sdio.raspberrypi,model-zero-w.txt ] && \
-ln -sfn brcmfmac43430-sdio.raspberrypi,3-model-b.txt \
-/lib/firmware/brcm/brcmfmac43430-sdio.raspberrypi,model-zero-w.txt
-
 
 #################################
 # Modify usercfg.txt content for boot options
