@@ -39,10 +39,7 @@ echo "disable_splash=1" >> "$Pi_PATH"/usercfg.txt
 grep -q "boot_delay=0" "$Pi_PATH"/usercfg.txt || \
 echo "boot_delay=0" >> "$Pi_PATH"/usercfg.txt
 
-# enable Bluetooth via overlays (post kernel 5.4.50)
-# (will not add if there and commented)
-grep -q "dtparam=krnbt=on" "$Pi_PATH"/usercfg.txt || \
-echo "dtparam=krnbt=on" >> "$Pi_PATH"/usercfg.txt
+# Bluetooth enabled by kernel/overlays by default (post kernel 6.1.25)
 # due to missing HW flowcontrol on Pi3b rev1.2 boards
 # one may want to limit baudrate with dtparam=krnbt_baudrate=<rate here>
 
