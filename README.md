@@ -73,14 +73,14 @@ Reboot to take advantage of your new **tiny-radioCD** !
 
 ```
 0.6: (TBD)
-- Update to Alpine 3.17
+- Update to Alpine 3.18
 - improve Bluetooth devices detection (requires bluealsa-cli & Bluez >= 5.65)
 - improve CD playback (mpd >= 0.23.9) & handling (udev rule & helper)
 - add volume & mute keys support
 - easy-setup available on all platforms
 - replace sudo by doas, incrond by busybox inotifyd, busybox acpid by acpid, expect by sexpect
 - various fixes (HDMI settings, services dependencies,streams updates,...)
-- Pi: enable Bluetooth via overlays
+- Pi: enable Bluetooth via overlays (default)
 - x86: nomodeset
 - automation script for building images with Alpine headless bootstrapping utility
 
